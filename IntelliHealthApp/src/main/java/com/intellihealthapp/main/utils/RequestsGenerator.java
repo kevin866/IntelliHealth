@@ -5,6 +5,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -16,16 +17,19 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Properties;
 
 public class RequestsGenerator {
     private static final String apiUrl = "https://api.openai.com/v1/chat/completions";
-    private static final String apiKey = "";
+    @Value("${apikey}")
+    private String apiKey;
     private final RestTemplate restTemplate = new RestTemplate();
 
     public String generateChat(String prompt) throws IOException {
 //        HttpHeaders headers = new HttpHeaders();
 //        headers.setContentType(MediaType.APPLICATION_JSON);
 //        headers.set("Authorization", "Bearer " + apiKey);
+//        System.out.println("apikey is: " + apiKey);
         OkHttpClient client = new OkHttpClient();
         String modelId = "gpt-3.5-turbo";
 
