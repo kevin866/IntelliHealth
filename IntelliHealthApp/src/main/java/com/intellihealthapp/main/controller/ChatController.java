@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class ChatController {
 
     @RequestMapping(value = "/chat/{content}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public String getResponses(@PathVariable(value="content") String content) throws JsonProcessingException{
+    public String getResponses(@PathVariable(value="content") String content) throws IOException {
 //        System.out.println(content);
         String decoded = java.net.URLDecoder.decode(content, StandardCharsets.UTF_8);
         System.out.println("Current input chat is: " + decoded);

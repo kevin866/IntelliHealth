@@ -1,20 +1,32 @@
 package com.intellihealthapp.main.utils;
 //import okhttp3.;
+import com.google.gson.Gson;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 public class RequestsGenerator {
-    private static final String OPENAI_URL = "https://api.openai.com/v1/chat/completions";
-    private static final String apiKey = "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";
+    private static final String apiUrl = "https://api.openai.com/v1/chat/completions";
+    private static final String apiKey = "";
     private final RestTemplate restTemplate = new RestTemplate();
 
-    public String generateChat(String prompt) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", "Bearer " + apiKey);
+    public String generateChat(String prompt) throws IOException {
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.APPLICATION_JSON);
+//        headers.set("Authorization", "Bearer " + apiKey);
+        OkHttpClient client = new OkHttpClient();
         String modelId = "gpt-3.5-turbo";
 
 //        String requestJson = "{\n" +
@@ -23,8 +35,23 @@ public class RequestsGenerator {
 //                "}";
         String requestJson = "{\"model\": \"" + modelId + "\", \"messages\": [{\"role\": \"system\", \"content\": \"You are a helpful assistant.\"}, {\"role\": \"user\", \"content\": \"" + prompt + "\"}]}";
 
-        HttpEntity<String> request = new HttpEntity<>(requestJson, headers);
-        ResponseEntity<String> response = restTemplate.postForEntity(OPENAI_URL, request, String.class);
-        return response.getBody();
+        HttpURLConnection connection = (HttpURLConnection) new URL(apiUrl).openConnection();
+
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Content-Type", "application/json");
+        connection.setRequestProperty("Authorization", "Bearer " + apiKey);
+
+        connection.setDoOutput(true);
+        connection.getOutputStream().write(requestJson.getBytes());
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        String response = reader.lines()
+                .reduce((a, b) -> a + b)
+                .get();
+
+        System.out.println(response);
+
+        return response;
+
     }
 }
