@@ -3,5 +3,6 @@ import joblib
 import pandas as pd
 import numpy as np
 import tensorflow as tf
-new_model = tf.keras.models.load_model('saved_model/my_model')
+model = tf.keras.models.load_model('saved_model/my_model')
+model.save("my_model.h5")
 
