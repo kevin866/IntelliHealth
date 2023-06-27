@@ -1,8 +1,8 @@
 from keras.backend import dropout
-import joblib
 import pandas as pd
 import numpy as np
-model = joblib.load('model.pkl')
+import tensorflow as tf
+model = tf.keras.models.load_model('my_model.h5')
 config = model.get_config() # Returns pretty much every information about your model
 #print(config["layers"][0]["config"]["batch_input_shape"]) # returns a tuple of width, height and channels
 df = pd.read_csv('preprocessed_kevin')
