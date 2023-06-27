@@ -1,6 +1,5 @@
 from keras.backend import dropout
 import joblib
-import tensorflow as tf
 import pandas as pd
 import numpy as np
 model = joblib.load('model.pkl')
