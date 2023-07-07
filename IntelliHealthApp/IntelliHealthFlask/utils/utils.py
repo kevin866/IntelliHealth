@@ -20,7 +20,7 @@ class Client:
         # print(self.key)
         openai.api_key = self.key
 
-    def ask_question(self, prompt, max_tokens=60, n=1, stop=None, temperature=0.5):
+    def ask_question(self, prompt, max_tokens=180, n=1, stop=None, temperature=0.5):
         # Generate text
         response = openai.Completion.create(
             engine=self.engine,

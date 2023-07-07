@@ -2,7 +2,7 @@ import React from 'react';
 // import '../styles/App.css';
 import Welcome from './Welcome';
 // import Patient from './Patient';
-// import Physician from './Physician';
+import Physician from './Physician';
 
 
 // destructuring
@@ -40,12 +40,12 @@ class App extends React.Component {
             {/* {
                 this.state.phase === this.phases.patient && 
                 <Patient setStatePhase = {this.setStatePhase} phases = {this.phases} />
-            }
+            } */}
 
             {
                 this.state.phase === this.phases.physician && 
                 <Physician setStatePhase = {this.setStatePhase} phases = {this.phases} />
-            } */}
+            }
 
         </div>
     )
