@@ -31,12 +31,18 @@ def predict():
     content_type = request.headers.get('Content-Type')
     if content_type == 'application/json':
         json_input = request.json
-        print(json_input)
+        print("model request inputs: ", json_input)
         cur_model = ModelService()
-        input_data = np.array(json_input["data"])
-        print(input_data)
-        print(input_data.shape)
+        print(type(json_input))
+        body = json.loads(json_input['body'])
+        print(type(body))
+        matrix = body["data"]
+        print(matrix)
+        input_data = np.array(matrix)
+        # print(input_data)
+        # print(input_data.shape)
         prediction = cur_model.predict(input_data)
+        print("prediction: ", prediction)
     else:
         return 'Content-Type not supported!', 400
 
