@@ -1,0 +1,11 @@
+1. Install required libraries
+     pip install -r requirements.txt
+
+2. enter open ai key in the file .env
+     OPENAI_API_KEY=***
+
+3. start chat bot app
+     flask run
+
+4. open front end
+     enter http://127.0.0.1:5000 in a web browser
