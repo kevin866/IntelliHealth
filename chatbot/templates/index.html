@@ -1,25 +1,143 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Flask HTML Example</title>
+    <title>Chat Application</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .chat-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+        }
+        .message {
+            margin-bottom: 10px;
+        }
+        .user-message {
+            text-align: left;
+            color: blue;
+        }
+        .model-message {
+            text-align: right;
+            color: green;
+        }
+        .input-container {
+            margin-top: 20px;
+        }
+        .message-input {
+            width: 80%;
+            padding: 5px;
+        }
+        .send-button {
+            width: 18%;
+            padding: 5px;
+        }
+        .option-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .option-container label {
+            margin-right: 10px;
+        }
+        .option-container select {
+            width: 60%;
+            padding: 5px;
+        }
+    </style>
 </head>
 <body>
-    <form method="POST" action="/">
-        <div style="float: left; width: 20%;">
-            <label for="option">Option:</label>
-            <select name="option" id="option">
-                <option value="option1">Option 1</option>
-                <option value="option2">Option 2</option>
-                <option value="option3">Option 3</option>
+    <div class="chat-container">
+        <div class="message">
+            <div class="model-message">Hello! How can I assist you today?</div>
+        </div>
+
+        <!-- Selection options -->
+        <div class="option-container">
+            <label>Select option:</label>
+            <select name="select-option" id="select-option" style="float: left;">
+                <option value="chatgpt">Query by ChatGPT</option>
+                <option value="diabetes">Query by Diabetes Content</option>
             </select>
         </div>
-        <div style="float: right; width: 80%;">
-            <label for="input_text">Input Text:</label>
-            <input type="text" name="input_text" id="input_text">
-            <button type="submit">Submit</button>
+
+        <div id="conversation"></div>
+        <div class="input-container">
+            
+            <input type="text" id="message-input" class="message-input" placeholder="Type your message here...">
+            <button type="button" id="send-button" class="send-button">Send</button>
         </div>
-        <div style="clear: both;"></div>
-        
-    </form>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var conversation = document.getElementById('conversation');
+            var messageInput = document.getElementById('message-input');
+            var sendButton = document.getElementById('send-button');
+            var selectOption = document.getElementById('select-option');
+            
+            // Event listener for select option change
+            selectOption.addEventListener('change', function() {
+                updateSelectOption();
+            });
+
+            sendButton.addEventListener('click', function() {
+                var message = messageInput.value.trim();
+                if (message !== '') {
+                    sendMessage(message);
+                    messageInput.value = '';
+                }
+            });
+
+            function updateSelectOption() {
+                selectOption = document.getElementById('select-option');
+            }
+
+            // Send message when Enter key is pressed
+            messageInput.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    var message = messageInput.value.trim();
+                    if (message !== '') {
+                        sendMessage(message);
+                        messageInput.value = '';
+                    }
+                }
+            });
+
+            function sendMessage(message) {
+                var messageContainer = document.createElement('div');
+                messageContainer.className = 'message user-message';
+                messageContainer.textContent = message;
+                conversation.appendChild(messageContainer);
+                conversation.scrollTop = conversation.scrollHeight;
+
+                 // Modify the body to include both message and select-option fields
+                var body = 'message=' + encodeURIComponent(message);
+                body += '&select-option=' + encodeURIComponent(selectOption.value);
+
+
+                fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: body
+                })
+                .then(response => response.json())
+                .then(data => {
+                    var modelMessageContainer = document.createElement('div');
+                    modelMessageContainer.className = 'message model-message';
+                    modelMessageContainer.textContent = data.message;
+                    conversation.appendChild(modelMessageContainer);
+                    conversation.scrollTop = conversation.scrollHeight;
+                })
+                .catch(error => console.log(error));
+            }
+        });
+    </script>
 </body>
 </html>
