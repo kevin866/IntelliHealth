@@ -14,6 +14,9 @@ from langchain.chains.conversation.memory import ConversationBufferWindowMemory
 from langchain.chains import RetrievalQA
 from langchain.agents import Tool
 from langchain.agents import initialize_agent
+from langchain import OpenAI
+from langchain.chains.question_answering import load_qa_chain
+
 
 load_dotenv()  # Load environment variables from .env file
 
@@ -120,9 +123,21 @@ def answer_by_context(question, context):
             frequency_penalty=0,
             presence_penalty=0,
             stop=None,
-            model="text-davinci-003",
+            model="text-davinci-003" # "gpt-3.5-turbo"# 
         )
     return response_a["choices"][0]["text"].strip()
+
+def search_pinecone_index(index_name, input_text):
+    embeddings = OpenAIEmbeddings()
+    docsearch = Pinecone.from_existing_index(index_name, embeddings)
+    
+    #defining LLM
+    llm = OpenAI(temperature=0.0)
+    #llm = ChatOpenAI(temperature = 0.0, model="gpt-3.5-turbo")
+
+    qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=docsearch.as_retriever(search_kwargs={"k": 2}))
+    #query = "What is DesignOps support model?"
+    return qa.run(input_text)
 
 def response_from_pinecone_index(input_text):
     #input_file = "cdc_diabetes_text_2.txt"
@@ -174,9 +189,12 @@ def generate_response(message, option):
             reply = "From ChatGPT: " + reply
         return reply
     else:
-        result = agent(input_text)
-        reply2 = result['output']
-        #reply2 = response_from_pinecone_index(input_text)
+        #pdb.set_trace()
+        #result = search_pinecone_index(index_name, input_text)
+        #print(result)
+        #result = agent(input_text)
+        #reply2 = result
+        reply2 = response_from_pinecone_index(input_text)
         if not reply2.startswith("From Diabetes Content"):
             reply2 = "From Diabetes Content: " + reply2
         #print(response)
@@ -184,4 +202,4 @@ def generate_response(message, option):
     #return response
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
