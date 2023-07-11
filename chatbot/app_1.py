@@ -98,18 +98,18 @@ def chat():
     #print(request.form)  # Add this line to print the form data
 
     option = request.form['select-option']
-    additional_text = request.form['additional-text']
+
     conversation_history = []
     # Append user message to conversation history
     conversation_history.append({'role': 'user', 'content': message})
 
     # Get response from language model
-    response = generate_response(message, option,additional_text)
+    response = generate_response(message, option)
 
     # Append model response to conversation history
     conversation_history.append({'role': 'model', 'content': response})
 
-    return jsonify({'message': response}) #, 'additionalText': additional_text
+    return jsonify({'message': response})
 
 def answer_by_context(question, context):
     response_a = openai.Completion.create(
@@ -153,7 +153,7 @@ def response_from_pinecone_index(input_text):
     answer = answer_by_context(input_text,context)
     return answer
 
-def generate_response(message, option,additional_text):
+def generate_response(message, option):
     # Combine conversation history and current message
     conversation = [{'role': item['role'], 'content': item['content']} for item in conversation_history]
     conversation.append({'role': 'user', 'content': message})
@@ -166,15 +166,7 @@ def generate_response(message, option,additional_text):
     #print("Input Text:", input_text)
     # Start the debugger
     #pdb.set_trace()
-    if option == "input_text":
-        if(additional_text == "Enter or paste text here..." or additional_text == ""):
-            reply = "From input text: no text was entered"
-        else:
-            reply = answer_by_context(input_text,additional_text)
-            if not reply.startswith("From input text"):
-                reply = "From input text: " + reply
-        return reply
-    elif option == "chatgpt":
+    if option == "chatgpt":
         #response_b = openai.Completion.create(
         #    model='gpt-3.5-turbo',#engine='text-davinci-003',
         #    prompt=input_text,
@@ -210,4 +202,4 @@ def generate_response(message, option,additional_text):
     #return response
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
