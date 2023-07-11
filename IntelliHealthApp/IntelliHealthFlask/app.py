@@ -16,16 +16,15 @@ def health():  # put application's code here
 @app.route('/api/v1/chat/<chat_content>')
 @cross_origin()
 def chat(chat_content):
-    """response = langchain_response.chatbot(chat_content)
-    print(response)
-    return response
+    response = langchain_response.chatbot(chat_content)
+    return {"text":response}
 """
     cur_service = GptService()
     response_content = cur_service.get_gpt_response(chat_content)
     print(type(response_content))
     print(response_content["choices"][0])
     return response_content["choices"][0]
-    
+"""   
 
 @app.route('/api/v1/model/prediction', methods=['POST'])
 @cross_origin()

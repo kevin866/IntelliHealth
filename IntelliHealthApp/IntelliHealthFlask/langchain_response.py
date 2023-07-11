@@ -19,16 +19,13 @@ from langchain.chains.question_answering import load_qa_chain
 
 
 load_dotenv()  # Load environment variables from .env file
-
-openai_api_key = os.getenv("OPENAI_API_KEY")
-
 # Set your OpenAI API key
 
 env_vars = dotenv_values('utils\.env')
 print(env_vars)
 PINECONE_API_KEY = env_vars['PINECONE_KEY']
 PINECONE_ENV = env_vars['PINECONE_ENVIRON']
-openai_api_key = env_vars["OPENAI_API_KEY"]
+openai_api_key = env_vars["apikey"]
 openai.api_key = openai_api_key
 
 #PINECONE_API_KEY = getpass.getpass("Pinecone API Key:")
