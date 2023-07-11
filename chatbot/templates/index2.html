@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat Application</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .chat-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            display: flex;
+        }
+        .input-container {
+            flex: 1;
+            margin-right: 20px;
+        }
+        .conversation-container {
+            flex: 2;
+        }
+        .message {
+            margin-bottom: 10px;
+        }
+        .user-message {
+            text-align: left;
+            color: blue;
+        }
+        .model-message {
+            text-align: right;
+            color: green;
+        }
+        .input-text {
+            width: 100%;
+            padding: 5px;
+            height: 100px;
+        }
+        .send-button {
+            width: 100%;
+            padding: 5px;
+            margin-top: 10px;
+        }
+        .option-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .option-container label {
+            margin-right: 10px;
+        }
+        .option-container select {
+            width: 60%;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="custom-text" >
+        <textarea id="additional-text" class="input-text" placeholder="Enter or paste text here..."></textarea>
+    </div>
+    <div class="chat-container">
+        <div class="input-container">
+            <textarea id="additional-text" class="input-text" placeholder="Enter or paste text here..."></textarea>
+            <div class="option-container">
+                <label>Select option:</label>
+                <select name="select-option" id="select-option">
+                    <option value="chatgpt">Query by ChatGPT</option>
+                    <option value="diabetes">Query by Diabetes Content</option>
+                </select>
+            </div>
+            <button type="button" id="send-button" class="send-button">Send</button>
+        </div>
+        <div class="conversation-container">
+            <div id="conversation"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var conversation = document.getElementById('conversation');
+            var additionalText = document.getElementById('additional-text');
+            var sendButton = document.getElementById('send-button');
+            var selectOption = document.getElementById('select-option');
+
+            sendButton.addEventListener('click', function() {
+                var message = additionalText.value.trim();
+                if (message !== '') {
+                    sendMessage(message);
+                    additionalText.value = '';
+                }
+            });
+
+            function sendMessage(message) {
+                var messageContainer = document.createElement('div');
+                messageContainer.className = 'message user-message';
+                messageContainer.textContent = message;
+                conversation.appendChild(messageContainer);
+                conversation.scrollTop = conversation.scrollHeight;
+
+                var body = 'message=' + encodeURIComponent(message);
+                body += '&select-option=' + encodeURIComponent(selectOption.value);
+
+                fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: body
+                })
+                .then(response => response.json())
+                .then(data => {
+                    var modelMessageContainer = document.createElement('div');
+                    modelMessageContainer.className = 'message model-message';
+                    modelMessageContainer.textContent = data.message;
+                    conversation.appendChild(modelMessageContainer);
+                    conversation.scrollTop = conversation.scrollHeight;
+                })
+                .catch(error => console.log(error));
+            }
+        });
+    </script>
+</body>
+</html>
