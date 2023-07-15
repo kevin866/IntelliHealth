@@ -18,10 +18,6 @@ from langchain import OpenAI
 from langchain.chains.question_answering import load_qa_chain
 import requests
 import re
-from flask import Flask, request
-import requests
-from bs4 import BeautifulSoup
-import newspaper
 
 
 load_dotenv()  # Load environment variables from .env file
@@ -46,21 +42,15 @@ vectorstore = Pinecone(
     index, embed.embed_query, text_field
 )
 
+
+
+
 app = Flask(__name__)
 conversation_history = []
 
 @app.route('/')
 def home():
     return render_template('index.html')
-
-@app.route('/extract')
-
-def extract_text():
-    url = request.args.get('url')
-    article = newspaper.Article(url)
-    article.download()
-    article.parse()
-    return article.text
 
 @app.route('/chat', methods=['POST'])
 def chat():
@@ -69,12 +59,12 @@ def chat():
     #print(request.form)  # Add this line to print the form data
     option = request.form['select-option']
     
-    #pdb.set_trace()
+    pdb.set_trace()
     env_vars = dotenv_values('.env')
     # Set your OpenAI API key
     
     #openai_api_key = os.getenv("OPENAI_API_KEY")
-    openai.api_key = env_vars['OPENAI_API_KEY']
+    openai.api_key = env_vars['OPENAI_API_KEY_1']
     openai_api_key = openai.api_key
     os.environ['OPENAI_API_KEY'] = openai_api_key
     # chat completion llm
@@ -331,7 +321,6 @@ def generate_response(message, option,additional_text):
             reply = "From ChatGPT: " + reply
         return reply
     elif option == "cdc_diabetes":
-        #pdb.set_trace()
         queries = [
             {'query': input_text}
         ]
@@ -341,7 +330,7 @@ def generate_response(message, option,additional_text):
                 reply = "From CDC Diabetes: " + reply
         return reply
     else:
-        #pdb.set_trace()
+        pdb.set_trace()
         #result = search_pinecone_index(index_name, input_text)
         #print(result)
         #result = agent(input_text)

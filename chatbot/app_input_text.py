@@ -16,19 +16,30 @@ from langchain.agents import Tool
 from langchain.agents import initialize_agent
 from langchain import OpenAI
 from langchain.chains.question_answering import load_qa_chain
-import requests
-import re
-from flask import Flask, request
-import requests
-from bs4 import BeautifulSoup
-import newspaper
 
 
 load_dotenv()  # Load environment variables from .env file
 
+openai_api_key = os.getenv("OPENAI_API_KEY")
 
+# Set your OpenAI API key
+openai.api_key = openai_api_key
 
-
+env_vars = dotenv_values('.env')
+PINECONE_API_KEY = env_vars['PINECONE_KEY']
+PINECONE_ENV = env_vars['PINECONE_ENVIRON']
+#PINECONE_API_KEY = getpass.getpass("Pinecone API Key:")
+# initialize pinecone
+pinecone.init(
+    api_key=PINECONE_API_KEY,  # find at app.pinecone.io
+    environment=PINECONE_ENV,  # next to api key in console
+)
+# chat completion llm
+llm = ChatOpenAI(
+    openai_api_key=openai_api_key,
+    model_name='gpt-3.5-turbo',
+    temperature=0.0
+)
 # conversational memory
 conversational_memory = ConversationBufferWindowMemory(
     memory_key='chat_history',
@@ -45,6 +56,33 @@ embed = OpenAIEmbeddings()
 vectorstore = Pinecone(
     index, embed.embed_query, text_field
 )
+# retrieval qa chain
+qa = RetrievalQA.from_chain_type(
+    llm=llm,
+    chain_type="stuff",
+    retriever=vectorstore.as_retriever()
+)
+
+tools = [
+    Tool(
+        name='Knowledge Base',
+        func=qa.run,
+        description=(
+            'use this tool when answering general knowledge queries to get '
+            'more information about the topic'
+        )
+    )
+]
+
+agent = initialize_agent(
+    agent='chat-conversational-react-description',
+    tools=tools,
+    llm=llm,
+    verbose=True,
+    max_iterations=3,
+    early_stopping_method='generate',
+    memory=conversational_memory
+)
 
 app = Flask(__name__)
 conversation_history = []
@@ -53,78 +91,13 @@ conversation_history = []
 def home():
     return render_template('index.html')
 
-@app.route('/extract')
-
-def extract_text():
-    url = request.args.get('url')
-    article = newspaper.Article(url)
-    article.download()
-    article.parse()
-    return article.text
-
 @app.route('/chat', methods=['POST'])
 def chat():
     #pdb.set_trace()
     message = request.form['message']
     #print(request.form)  # Add this line to print the form data
+
     option = request.form['select-option']
-    
-    #pdb.set_trace()
-    env_vars = dotenv_values('.env')
-    # Set your OpenAI API key
-    
-    #openai_api_key = os.getenv("OPENAI_API_KEY")
-    openai.api_key = env_vars['OPENAI_API_KEY']
-    openai_api_key = openai.api_key
-    os.environ['OPENAI_API_KEY'] = openai_api_key
-    # chat completion llm
-    llm = ChatOpenAI(
-        openai_api_key=openai_api_key,
-        model_name='gpt-3.5-turbo',
-        temperature=0.0
-    )
-    if(option == "cdc_diabetes"):
-        PINECONE_API_KEY = env_vars['PINECONE_KEY_cdc']
-        PINECONE_ENV = env_vars['PINECONE_ENVIRON_cdc']
-    else:
-        PINECONE_API_KEY = env_vars['PINECONE_KEY']
-        PINECONE_ENV = env_vars['PINECONE_ENVIRON']
-    #PINECONE_API_KEY = getpass.getpass("Pinecone API Key:")
-    # initialize pinecone
-    pinecone.init(
-        api_key=PINECONE_API_KEY,  # find at app.pinecone.io
-        environment=PINECONE_ENV,  # next to api key in console
-    )
-    # retrieval qa chain
-    qa = RetrievalQA.from_chain_type(
-        llm=llm,
-        chain_type="stuff",
-        retriever=vectorstore.as_retriever()
-    )
-
-
-    tools = [
-        Tool(
-            name='Knowledge Base',
-            func=qa.run,
-            description=(
-                'use this tool when answering general knowledge queries to get '
-                'more information about the topic'
-            )
-        )
-    ]
-    agent = initialize_agent(
-        agent='chat-conversational-react-description',
-        tools=tools,
-        llm=llm,
-        verbose=True,
-        max_iterations=3,
-        early_stopping_method='generate',
-        memory=conversational_memory
-    )
-
-    
-
     additional_text = request.form['additional-text']
     conversation_history = []
     # Append user message to conversation history
@@ -180,113 +153,6 @@ def response_from_pinecone_index(input_text):
     answer = answer_by_context(input_text,context)
     return answer
 
-def query_cdc_2(endpoint_url, input_text):
-
-    headers = {
-        'Authorization': 'Bearer 64b0183a0e20777e4600050a',
-        'Content-Type': 'application/json'
-    }
-    queries = [
-        {'query': input_text}
-    ]
-    res = requests.post(
-        f"{endpoint_url}/query",
-        headers=headers,
-        json={
-            'queries': queries
-        }
-    )
-    contexts=[]
-    count=1
-    for query_result in res.json()['results']:
-        for result in query_result['results']:
-            contexts.append("Context "+str(count)+": "+result['text']+"with a URL: "+result['metadata']['url'])
-    # Extract all URLs from the contexts
-    urls = []
-    for context in contexts:
-        url_match = re.search(r"https?://\S+", context)
-        if url_match:
-            urls.append(url_match.group())
-
-    answers = []  # Initialize the answers list
-
-    for i, context in enumerate(contexts):
-        prompt = f"Answer the question based on the context below:\n\n{context}\n\nURL: {urls[i]}\n\nQuestion: {input_text}\nAnswer:"
-
-        response = openai.Completion.create(
-            prompt=prompt,
-            model="text-davinci-003",
-            temperature=0,
-            max_tokens=150,
-            top_p=1,
-            frequency_penalty=0,
-            presence_penalty=0,
-            stop=None
-        )
-
-        answer = response.choices[0].text.strip()
-        answer_with_url = answer + ' URL: ' + urls[i]  # Append the answer with the URL
-        answers.append(answer_with_url)
-
-        # Find the index of the highest-scoring answer
-    best_answer_index = max(range(len(answers)), key=answers.__getitem__)
-
-    best_answer = answers[best_answer_index]
-
-    print(f"Best Answer: {best_answer}")
-
-    return best_answer
-
-
-def query_cdc(endpoint_url, input_text):
-    headers = {
-        'Authorization': 'Bearer 64b0183a0e20777e4600050a',
-        'Content-Type': 'application/json'
-    }
-    queries = [
-        {'query': input_text}
-    ]
-    res = requests.post(
-        f"{endpoint_url}/query",
-        headers=headers,
-        json={
-            'queries': queries
-        }
-    )
-    answers = []
-    contexts=[]
-    count=1
-    for query_result in res.json()['results']:
-        for result in query_result['results']:
-            answers.append(result['text']+' url: '+result['metadata']['url'])
-            contexts.append("Context "+str(count)+": "+result['text']+"with a URL: "+result['metadata']['url'])
-    context = " ".join(answers) 
-
-    # Extract all URLs from the context
-    urls = re.findall(r"https?://\S+", context)
-
-    response_a = openai.Completion.create(
-        prompt=f"Answer the question based on the context below, append the URLs where the answer was found \
-            and if the question can't be answered based on the context, \
-            say \"I don't know\"\n\nContext: {context}\n\n---\n\nQuestion: {input_text}\nAnswer:",
-        temperature=0,
-        max_tokens=150,
-        top_p=1,
-        frequency_penalty=0,
-        presence_penalty=0,
-        stop=None,
-        model="text-davinci-003",
-    )
-
-    answer = response_a["choices"][0]["text"]
-
-    if urls:
-        urls_text = " ".join(urls)
-        answer_with_urls = f"{answer}\n\nURLs: {urls_text}"
-    else:
-        answer_with_urls = answer
-    return answer_with_urls
-
 def generate_response(message, option,additional_text):
     # Combine conversation history and current message
     conversation = [{'role': item['role'], 'content': item['content']} for item in conversation_history]
@@ -329,16 +195,6 @@ def generate_response(message, option,additional_text):
         #reply = response_b.choices[0].text.strip()
         if not reply.startswith("From ChatGPT"):
             reply = "From ChatGPT: " + reply
-        return reply
-    elif option == "cdc_diabetes":
-        #pdb.set_trace()
-        queries = [
-            {'query': input_text}
-        ]
-        endpoint_url = 'http://localhost:8000'
-        reply = query_cdc_2(endpoint_url, input_text)
-        if not reply.startswith("From CDC Diabetes: "):
-                reply = "From CDC Diabetes: " + reply
         return reply
     else:
         #pdb.set_trace()

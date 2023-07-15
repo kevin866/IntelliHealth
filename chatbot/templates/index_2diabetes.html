@@ -33,9 +33,6 @@
         .input-container {
             margin-top: 20px;
         }
-        #url-input {
-            width: 500px;
-        }
         .input-text {
             width: 100%;
             height: 300px;
@@ -62,13 +59,10 @@
             width: 60%;
             padding: 5px;
         }
-        
     </style>
 </head>
 <body>
-    <div class="custom-text">
-        <input type="text" id="url-input" placeholder="Enter URL">
-        <button type="button" id="extract-button">Extract Text</button>
+    <div class="custom-text" >
         <textarea id="additional-text" class="input-text" placeholder="Enter or paste text here..."></textarea>
     </div>
     <div class="chat-container">
@@ -84,7 +78,6 @@
                 <option value="chatgpt">Query by ChatGPT</option>
                 <option value="diabetes">Query by Diabetes Content</option>
                 <option value="cdc_diabetes">Query by CDC Diabetes</option>
-                
             </select>
         </div>
 
@@ -104,8 +97,6 @@
             var sendButton = document.getElementById('send-button');
             var selectOption = document.getElementById('select-option');
             var additionalText = document.getElementById('additional-text');
-            var urlInput = document.getElementById('url-input');
-            var extractButton = document.getElementById('extract-button');
             
             // Event listener for select option change
             selectOption.addEventListener('change', function() {
@@ -120,14 +111,7 @@
                     messageInput.value = '';
                 }
             });
-
-            extractButton.addEventListener('click', function() {
-                var url = urlInput.value.trim();
-                if (url !== '') {
-                    extractTextFromURL(url);
-                }
-            });
-
+        
             function updateSelectOption() {
                 selectOption = document.getElementById('select-option');
             }
@@ -143,24 +127,7 @@
                     }
                 }
             });
-
-            function extractTextFromURL(url) {
-                fetch('/extract?url=' + encodeURIComponent(url))
-                    .then(response => {
-                        if (response.ok) {
-                            return response.text();
-                        } else {
-                            throw new Error('Error: ' + response.status);
-                        }
-                    })
-                    .then(data => {
-                        additionalText.value = data;
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                    });
-            }
-
+        
             function sendMessage(message, additionalTextValue) {
                 var messageContainer = document.createElement('div');
                 messageContainer.className = 'message user-message';
@@ -194,6 +161,7 @@
                 .catch(error => console.log(error));
             }
         });
+               
     </script>
 </body>
 </html>
