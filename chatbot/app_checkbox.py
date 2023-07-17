@@ -6,10 +6,21 @@ import openai
 import pinecone
 from dotenv import dotenv_values
 from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores import Pinecone
-from langchain.agents import Tool, initialize_agent
+from langchain.document_loaders import TextLoader
+from langchain.chat_models import ChatOpenAI
 from langchain.chains.conversation.memory import ConversationBufferWindowMemory
 from langchain.chains import RetrievalQA
+from langchain.agents import Tool
+from langchain.agents import initialize_agent
+from langchain import OpenAI
+from langchain.chains.question_answering import load_qa_chain
+import requests
+import re
+from flask import Flask, request
+import requests
+from bs4 import BeautifulSoup
 import newspaper
 
 

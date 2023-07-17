@@ -77,15 +77,18 @@
         </div>
 
         <!-- Selection options -->
+        <!-- <option value="chatgpt">Query by ChatGPT</option> -->
         <div class="option-container">
             <label>Select option:</label>
-            <select name="select-option" id="select-option" style="float: left;">
-                <option value="input_text">Query by input text</option>
-                <option value="chatgpt">Query by ChatGPT</option>
-                <option value="diabetes">Query by Diabetes Content</option>
-                <option value="cdc_diabetes">Query by CDC Diabetes</option>
-                
-            </select>
+            <input type="radio" name="select-option" id="select-option-input_text" value="input_text" checked>
+            <label for="select-option-input_text">Query with input text</label>
+            
+            <input type="radio" name="select-option" id="select-option-diabetes" value="diabetes">
+            <label for="select-option-diabetes">Query with diabetes.org</label>
+            
+            <input type="radio" name="select-option" id="select-option-cdc_diabetes" value="cdc_diabetes">
+            <label for="select-option-cdc_diabetes">Query with cdc.gov/diabetes</label>
+            
         </div>
 
         <div id="conversation"></div>
@@ -102,24 +105,55 @@
             var conversation = document.getElementById('conversation');
             var messageInput = document.getElementById('message-input');
             var sendButton = document.getElementById('send-button');
-            var selectOption = document.getElementById('select-option');
+            var selectOptionInputText = document.getElementById('select-option-input_text');
+            var selectOptionDiabetes = document.getElementById('select-option-diabetes');
+            var selectOptionCdcDiabetes = document.getElementById('select-option-cdc_diabetes');
+        
+
             var additionalText = document.getElementById('additional-text');
             var urlInput = document.getElementById('url-input');
             var extractButton = document.getElementById('extract-button');
             
-            // Event listener for select option change
-            selectOption.addEventListener('change', function() {
+            // Example of assigning the selected option to a variable
+            var selectedOption = '';
+
+            selectOptionInputText.addEventListener('change', function() {
+            if (this.checked) {
+                selectedOption = this.value; // Assign the selected option to the variable
+                console.log('Selected option: input_text'); // Add a print statement to check if "Query by input text" is selected
                 updateSelectOption();
+            }
             });
-        
+
+            selectOptionDiabetes.addEventListener('change', function() {
+            if (this.checked) {
+                selectedOption = this.value; // Assign the selected option to the variable
+                console.log('Selected option: diabetes'); // Add a print statement to check if "Query by Diabetes.org" is selected
+                updateSelectOption();
+            }
+            });
+
+            selectOptionCdcDiabetes.addEventListener('change', function() {
+            if (this.checked) {
+                selectedOption = this.value; // Assign the selected option to the variable
+                console.log('Selected option: cdc_diabetes'); // Add a print statement to check if "Query by CDC Diabetes" is selected
+                updateSelectOption();
+            }
+            });
+
             sendButton.addEventListener('click', function() {
-                var message = messageInput.value.trim();
-                var additionalTextValue = additionalText.value.trim(); // Get the content of additional-text
-                if (message !== '') {
-                    sendMessage(message, additionalTextValue); // Pass additionalTextValue to sendMessage function
-                    messageInput.value = '';
-                }
+            console.log('sendButton clicked'); // Add a print statement to check if the send button is clicked
+            var message = messageInput.value.trim();
+            var additionalTextValue = additionalText.value.trim();
+            if (message !== '') {
+                console.log('Sending message:', message); // Add a print statement to check the message value
+                console.log('Additional text:', additionalTextValue); // Add a print statement to check the additional text value
+                console.log('Selected option:', selectedOption); // Add a print statement to check the selected option
+                sendMessage(message, additionalTextValue, selectedOption);
+                messageInput.value = '';
+            }
             });
+
 
             extractButton.addEventListener('click', function() {
                 var url = urlInput.value.trim();
@@ -129,7 +163,13 @@
             });
 
             function updateSelectOption() {
-                selectOption = document.getElementById('select-option');
+                if (selectOptionInputText.checked) {
+                    selectedOption = selectOptionInputText.value;
+                } else if (selectOptionDiabetes.checked) {
+                    selectedOption = selectOptionDiabetes.value;
+                } else if (selectOptionCdcDiabetes.checked) {
+                    selectedOption = selectOptionCdcDiabetes.value;
+                }
             }
         
             // Send message when Enter key is pressed
@@ -170,7 +210,7 @@
         
                 // Modify the body to include both message, select-option, and additional-text fields
                 var body = 'message=' + encodeURIComponent(message);
-                body += '&select-option=' + encodeURIComponent(selectOption.value);
+                body += '&select-option=' + encodeURIComponent(selectedOption);
                 body += '&additional-text=' + encodeURIComponent(additionalTextValue); // Add additional-text field
         
                 fetch('/chat', {
