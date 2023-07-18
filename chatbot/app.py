@@ -7,6 +7,7 @@ import pinecone
 from dotenv import dotenv_values
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.vectorstores import Pinecone
+from langchain.chat_models import ChatOpenAI
 from langchain.agents import Tool, initialize_agent
 from langchain.chains.conversation.memory import ConversationBufferWindowMemory
 from langchain.chains import RetrievalQA
@@ -14,9 +15,6 @@ import newspaper
 
 
 load_dotenv()  # Load environment variables from .env file
-
-
-
 
 # conversational memory
 conversational_memory = ConversationBufferWindowMemory(
@@ -224,112 +222,6 @@ def query_cdc_embedding(input_text, index):
 
 
 
-def query_cdc_2(endpoint_url, input_text):
-
-    headers = {
-        'Authorization': 'Bearer 64b0183a0e20777e4600050a',
-        'Content-Type': 'application/json'
-    }
-    queries = [
-        {'query': input_text}
-    ]
-    res = requests.post(
-        f"{endpoint_url}/query",
-        headers=headers,
-        json={
-            'queries': queries
-        }
-    )
-    contexts=[]
-    count=1
-    for query_result in res.json()['results']:
-        for result in query_result['results']:
-            contexts.append("Context "+str(count)+": "+result['text']+"with a URL: "+result['metadata']['url'])
-    # Extract all URLs from the contexts
-    urls = []
-    for context in contexts:
-        url_match = re.search(r"https?://\S+", context)
-        if url_match:
-            urls.append(url_match.group())
-
-    answers = []  # Initialize the answers list
-
-    for i, context in enumerate(contexts):
-        prompt = f"Answer the question based on the context below:\n\n{context}\n\nURL: {urls[i]}\n\nQuestion: {input_text}\nAnswer:"
-
-        response = openai.Completion.create(
-            prompt=prompt,
-            model="text-davinci-003",
-            temperature=0,
-            max_tokens=150,
-            top_p=1,
-            frequency_penalty=0,
-            presence_penalty=0,
-            stop=None
-        )
-
-        answer = response.choices[0].text.strip()
-        answer_with_url = answer + ' URL: ' + urls[i]  # Append the answer with the URL
-        answers.append(answer_with_url)
-
-        # Find the index of the highest-scoring answer
-    best_answer_index = max(range(len(answers)), key=answers.__getitem__)
-
-    best_answer = answers[best_answer_index]
-
-    print(f"Best Answer: {best_answer}")
-
-    return best_answer
-
-
-def query_cdc(endpoint_url, input_text):
-    headers = {
-        'Authorization': 'Bearer 64b0183a0e20777e4600050a',
-        'Content-Type': 'application/json'
-    }
-    queries = [
-        {'query': input_text}
-    ]
-    res = requests.post(
-        f"{endpoint_url}/query",
-        headers=headers,
-        json={
-            'queries': queries
-        }
-    )
-    answers = []
-    contexts=[]
-    count=1
-    for query_result in res.json()['results']:
-        for result in query_result['results']:
-            answers.append(result['text']+' url: '+result['metadata']['url'])
-            contexts.append("Context "+str(count)+": "+result['text']+"with a URL: "+result['metadata']['url'])
-    context = " ".join(answers) 
-
-    # Extract all URLs from the context
-    urls = re.findall(r"https?://\S+", context)
-
-    response_a = openai.Completion.create(
-        prompt=f"Answer the question based on the context below, append the URLs where the answer was found \
-            and if the question can't be answered based on the context, \
-            say \"I don't know\"\n\nContext: {context}\n\n---\n\nQuestion: {input_text}\nAnswer:",
-        temperature=0,
-        max_tokens=150,
-        top_p=1,
-        frequency_penalty=0,
-        presence_penalty=0,
-        stop=None,
-        model="text-davinci-003",
-    )
-
-    answer = response_a["choices"][0]["text"]
-
-    if urls:
-        urls_text = " ".join(urls)
-        answer_with_urls = f"{answer}\n\nURLs: {urls_text}"
-    else:
-        answer_with_urls = answer
-    return answer_with_urls
 
 def generate_response(message, option,additional_text):
     # Combine conversation history and current message
@@ -343,7 +235,7 @@ def generate_response(message, option,additional_text):
     # Debug: Print the input text
     #print("Input Text:", input_text)
     # Start the debugger
-    pdb.set_trace()
+    #pdb.set_trace()
     if option == "input_text":
         if(additional_text == "Enter or paste text here..." or additional_text == ""):
             reply = "From input text: no text was entered"
