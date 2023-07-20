@@ -17,12 +17,10 @@ from langchain.agents import initialize_agent
 from langchain import OpenAI
 from langchain.chains.question_answering import load_qa_chain
 
-BASEDIR = os.path.abspath(os.path.dirname(__file__))
-load_dotenv()
 
 #load_dotenv()  # Load environment variables from .env file
 # Set your OpenAI API key
-env_vars = dotenv_values('utils\.env')
+env_vars = dotenv_values('utils/.env')
 print(env_vars)
 PINECONE_API_KEY = env_vars['PINECONE_KEY']
 PINECONE_ENV = env_vars['PINECONE_ENVIRON']
