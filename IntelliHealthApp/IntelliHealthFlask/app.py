@@ -25,6 +25,9 @@ def chat(chat_content):
     print(response_content["choices"][0])
     return response_content["choices"][0]
 """   
+def recommendation_generator(data):
+    "Give recommendation for preventing diabetes to a male 29 years old with a Hypertension of 3, Heart Disease of 3, Smoking history, a BMI of 76, HbA1c Level of 87, and blood glucose level of 35. "
+    return 
 
 @app.route('/api/v1/model/prediction', methods=['POST'])
 @cross_origin()
@@ -40,9 +43,18 @@ def predict():
         matrix = body["data"]
         #print(matrix)
         input_data = np.array(matrix)
-        # print(input_data)
-        # print(input_data.shape)
+        print(input_data)
+        print(input_data.shape)
         prediction = cur_model.predict(input_data)
+        data = np.ravel(input_data)
+        data[0]
+        Gender = ""
+        if data[0] == 0.0:
+            Gender = 'male'
+        else:
+            Gender = 'female'
+
+
         if prediction == 1.0:
             prediction = 'high chances of diabetes'
         else:

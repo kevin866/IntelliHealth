@@ -9,3 +9,4 @@ pinecone-client
 python-dotenv==1.0.0
 scikit_learn
 tensorflow
+lightgbm
