@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, jsonify
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 import pdb
 import os
 import openai
@@ -17,10 +17,11 @@ from langchain.agents import initialize_agent
 from langchain import OpenAI
 from langchain.chains.question_answering import load_qa_chain
 
+BASEDIR = os.path.abspath(os.path.dirname(__file__))
+load_dotenv()
 
-load_dotenv()  # Load environment variables from .env file
+#load_dotenv()  # Load environment variables from .env file
 # Set your OpenAI API key
-
 env_vars = dotenv_values('utils\.env')
 print(env_vars)
 PINECONE_API_KEY = env_vars['PINECONE_KEY']
