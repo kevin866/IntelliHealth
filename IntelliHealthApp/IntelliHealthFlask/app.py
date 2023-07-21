@@ -4,6 +4,7 @@ from flask_cors import CORS, cross_origin
 from service.get_gpt_service import GptService
 from service.get_model_service import ModelService
 import langchain_response
+import openai
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
@@ -27,7 +28,26 @@ def chat(chat_content):
 """   
 def recommendation_generator(data):
     "Give recommendation for preventing diabetes to a male 29 years old with a Hypertension of 3, Heart Disease of 3, Smoking history, a BMI of 76, HbA1c Level of 87, and blood glucose level of 35. "
-    return 
+    query = "Give recommendations to a {age}-year-old {gender} with {hypertension}, {heart_disease}, {smoking_history}, a BMI of {BMI}, HbA1c level of {HbA1c}, and a blood glucose level of {glucose}. Make you repsonse in second person pronoun.'".format(age = data[1], 
+                                                                                                                                                                                                            gender = "male" if data[0] == 1.0 else "female", 
+                                                                                                                                                                                                            hypertension = "hypertension" if data[2] == 1.0 else "no hypertension", 
+                                                                                                                                                                                                            heart_disease = "heart diease" if data[3] == 1.0 else "no heart diease", 
+                                                                                                                                                                                                            smoking_history = "smoking history" if data[4] == 1.0 else "no smoking history",
+                                                                                                                                                                                                            BMI = int(data[5]), HbA1c = data[6], glucose = data[7])
+
+    question = [
+        {"role": "system", "content": "You are a health consultant specialized in diabetes."},
+        {"role": "user", "content": query}
+        ]
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=question,
+        temperature=0,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0
+        )
+    return response['choices'][0]['message']['content']
 
 @app.route('/api/v1/model/prediction', methods=['POST'])
 @cross_origin()
@@ -47,23 +67,19 @@ def predict():
         print(input_data.shape)
         prediction = cur_model.predict(input_data)
         data = np.ravel(input_data)
-        data[0]
-        Gender = ""
-        if data[0] == 0.0:
-            Gender = 'male'
-        else:
-            Gender = 'female'
-
-
+        recom = recommendation_generator(np.ravel(input_data))
         if prediction == 1.0:
-            prediction = 'high chances of diabetes'
+            prediction = "You have a high chances of developing diabetes, "
         else:
-            prediction = 'no diabetes'
+            prediction = "You have a low chances of developing diabetes, "
         #print("prediction: ", prediction)
+
     else:
         return 'Content-Type not supported!', 400
-
-    response = json.dumps({"prediction": str(prediction)})
+    print(recom)
+    prediction = prediction+ recom.replace('\n\n', "  ")
+    response = json.dumps({"prediction": prediction})
+    print(response)
     return response
 
 
