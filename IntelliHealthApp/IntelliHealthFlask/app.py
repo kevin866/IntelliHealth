@@ -69,15 +69,15 @@ def predict():
         data = np.ravel(input_data)
         recom = recommendation_generator(np.ravel(input_data))
         if prediction == 1.0:
-            prediction = "You have a high chances of developing diabetes, "
+            prediction = "  You have a high chances of developing diabetes, "
         else:
-            prediction = "You have a low chances of developing diabetes, "
+            prediction = "  You have a low chances of developing diabetes, "
         #print("prediction: ", prediction)
 
     else:
         return 'Content-Type not supported!', 400
-    print(recom)
-    prediction = prediction+ recom.replace('\n\n', "  ")
+    #print(recom)
+    prediction = prediction+ recom.replace('\n\n', "\n  ")
     response = json.dumps({"prediction": prediction})
     print(response)
     return response

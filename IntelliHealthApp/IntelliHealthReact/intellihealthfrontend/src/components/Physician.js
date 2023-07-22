@@ -5,7 +5,7 @@ import axios from 'axios';
 const ASK_QUETIONS_URL = 'http://127.0.0.1:5000/api/v1/chat/'
 const QUOTE_MODEL_URL = 'http://127.0.0.1:5000/api/v1/model/prediction'
 const { TextArea } = Input;
-
+let text1 = "sea";
 class Physician extends Component {
     constructor(props) {
         super(props);
@@ -157,7 +157,7 @@ class Physician extends Component {
             
             // console.log(response);
             this.setState({ currentPrediction: response.data.prediction}); // Set the result when the promise resolves
-            console.log(this.state.currentPrediction);
+            console.log(this.state.currentPrediction+text1);
             return response; // Return the result value
         });
     }
@@ -222,9 +222,19 @@ class Physician extends Component {
 
                 <div>
                     <Card title="Prediction: " bordered={false} style={{ width: 800, margin: 20}}>
-                        <p >
-                            {this.state.currentPrediction}
-                        </p>
+                    <p style={{ textAlign: 'left' }}>
+                        {this.state.currentPrediction !== null ? (
+                            this.state.currentPrediction.split('\n').map((paragraph, index) => (
+                            <React.Fragment key={index}>
+                                {index > 0 && <span style={{ marginLeft: '20px' }} />}
+                                {paragraph}
+                                <br />
+                            </React.Fragment>
+                            ))
+                        ) : (
+                            <span>No prediction available.</span>
+                        )}
+                    </p>
                     </Card>
 
                 </div>
