@@ -12,72 +12,9 @@ from langchain.agents import Tool, initialize_agent
 from langchain.chains.conversation.memory import ConversationBufferWindowMemory
 from langchain.chains import RetrievalQA
 import newspaper
-from flask import Flask, render_template, request, jsonify, redirect, url_for
-from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
-app = Flask(__name__)
+
 load_dotenv()  # Load environment variables from .env file
-env_vars = dotenv_values('.env')
-
-app.secret_key = env_vars['SECRET_KEY']  # Replace with your secret key
-
-# Create the LoginManager instance
-login_manager = LoginManager()
-login_manager.init_app(app)
-
-# Define a User class for authentication
-class User(UserMixin):
-    def __init__(self, user_id):
-        self.id = user_id
-#pdb.set_trace()
-
-# Simulated user data
-User_Id = env_vars['USER_ID']
-Pass_WD = env_vars['PASS_WD']
-
-users = {User_Id: Pass_WD}  # Replace with your user data
-
-# Login route
-@app.route('/', methods=['POST', 'GET'])
-@app.route('/login', methods=['POST', 'GET'])
-def login():
-    if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
-        
-        if username in users and users[username] == password:
-            print("Correct username and password")
-            user = User(username)
-            login_user(user)
-            return redirect(url_for('protected'))
-        else:
-            print('Invalid username or password')
-            error_message = 'Invalid username or password'
-            return render_template('login.html', error_message=error_message)
-    
-    print('Rendering login page')
-    return render_template('login.html')
-
-# Logout route
-@app.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    return redirect(url_for('login'))
-
-# Protected route - requires authentication
-@app.route('/protected')
-@login_required
-def protected():
-    return render_template('index.html')
-
-# Set up the user_loader callback function
-@login_manager.user_loader
-def load_user(user_id):
-    return User(user_id)
-
-# Set the login view
-login_manager.login_view = 'login'
 
 # conversational memory
 conversational_memory = ConversationBufferWindowMemory(
@@ -86,9 +23,25 @@ conversational_memory = ConversationBufferWindowMemory(
     return_messages=True
 )
 
+text_field = "text"
+index_name = "complication"
+# switch back to normal index for langchain
+index = pinecone.Index(index_name)
+embed = OpenAIEmbeddings()
+
+vectorstore = Pinecone(
+    index, embed.embed_query, text_field
+)
+
+app = Flask(__name__)
 conversation_history = []
 
+@app.route('/')
+def home():
+    return render_template('index.html')
+
 @app.route('/extract')
+
 def extract_text():
     url = request.args.get('url')
     article = newspaper.Article(url)
@@ -108,7 +61,8 @@ def chat():
     print("Selected option:", option)
     print("Additional text:", additional_text)
     
-    
+    #pdb.set_trace()
+    env_vars = dotenv_values('.env')
     # Set your OpenAI API key
     
     #openai_api_key = os.getenv("OPENAI_API_KEY")
@@ -121,34 +75,18 @@ def chat():
         model_name='gpt-3.5-turbo',
         temperature=0.0
     )
-    index_name=""
-    PINECONE_API_KEY = ""
-    PINECONE_ENV = ""
     if(option == "cdc_diabetes"):
         PINECONE_API_KEY = env_vars['PINECONE_KEY_cdc']
         PINECONE_ENV = env_vars['PINECONE_ENVIRON_cdc']
-        index_name="diabetes"
-    elif(option=="diabetes"):
+    else:
         PINECONE_API_KEY = env_vars['PINECONE_KEY']
         PINECONE_ENV = env_vars['PINECONE_ENVIRON']
-        index_name="complication"
-
-    text_field = "text"
-    # switch back to normal index for langchain
-    index = pinecone.Index(index_name)
-    embed = OpenAIEmbeddings()
-
-    vectorstore = Pinecone(
-        index, embed.embed_query, text_field
-    )
-
     #PINECONE_API_KEY = getpass.getpass("Pinecone API Key:")
     # initialize pinecone
-    if(PINECONE_API_KEY != ""):
-        pinecone.init(
-            api_key=PINECONE_API_KEY,  # find at app.pinecone.io
-            environment=PINECONE_ENV,  # next to api key in console
-        )
+    pinecone.init(
+        api_key=PINECONE_API_KEY,  # find at app.pinecone.io
+        environment=PINECONE_ENV,  # next to api key in console
+    )
     # retrieval qa chain
     qa = RetrievalQA.from_chain_type(
         llm=llm,
@@ -176,6 +114,7 @@ def chat():
         early_stopping_method='generate',
         memory=conversational_memory
     )
+
     
     conversation_history = []
     # Append user message to conversation history
@@ -239,23 +178,13 @@ def get_highest_score(items):
     else:
         return ""
 
-def query_cdc_embedding(input_text, index_name):
+def query_cdc_embedding(input_text, index):
 
     #https://blog.baeke.info/2023/03/16/pinecone-and-openai-magic-a-guide-to-finding-your-long-lost-blog-posts-with-vectorized-search-and-chatgpt/
  
     # set index; must exist
     #index = pinecone.Index('diabetes')
-    text_field = "text"
-    #index_name = "complication"
-    # switch back to normal index for langchain
-    index = pinecone.Index(index_name)
-    embed = OpenAIEmbeddings()
-
-    vectorstore = Pinecone(
-        index, embed.embed_query, text_field
-    )
-
-    #index = pinecone.Index(index)
+    index = pinecone.Index(index)
 
     #query = "what is diabetets?"
     # vectorize with OpenAI text-emebdding-ada-002
@@ -290,6 +219,9 @@ def query_cdc_embedding(input_text, index_name):
     answer = response.choices[0].text.strip()
     answer_with_url = answer + ' URL: ' + url  # Append the answer with the URL
     return answer_with_url
+
+
+
 
 def generate_response(message, option,additional_text):
     # Combine conversation history and current message
@@ -335,7 +267,7 @@ def generate_response(message, option,additional_text):
             reply = "From ChatGPT: " + reply
         return reply
     elif option == "cdc_diabetes":
-        pdb.set_trace()
+        #pdb.set_trace()
         #queries = [
         #    {'query': input_text}
         #]
@@ -345,21 +277,17 @@ def generate_response(message, option,additional_text):
         if not reply.startswith("Answer from cdc.gov/diabetes: "):
                 reply = "Answer from cdc.gov/diabetes: " + reply
         return reply
-    elif option == "diabetes":
-        pdb.set_trace()
+    else:
+        #pdb.set_trace()
         #result = search_pinecone_index(index_name, input_text)
         #print(result)
         #result = agent(input_text)
         #reply2 = result
-        reply = query_cdc_embedding(input_text, "complication")
-        if not reply.startswith("Answer from diabetes.org: "):
-                reply = "Answer from diabetes.org: " + reply
-        return reply
-        #reply2 = response_from_pinecone_index(input_text)
-        #if not reply2.startswith("Answer from diabetes.org"):
-        #    reply2 = "Answer from diabetes.org: " + reply2
+        reply2 = response_from_pinecone_index(input_text)
+        if not reply2.startswith("Answer from diabetes.org"):
+            reply2 = "Answer from diabetes.org: " + reply2
         #print(response)
-        #return reply2
+        return reply2
     #return response
 
 if __name__ == '__main__':

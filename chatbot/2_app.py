@@ -16,10 +16,7 @@ from flask import Flask, render_template, request, jsonify, redirect, url_for
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
 app = Flask(__name__)
-load_dotenv()  # Load environment variables from .env file
-env_vars = dotenv_values('.env')
-
-app.secret_key = env_vars['SECRET_KEY']  # Replace with your secret key
+app.secret_key = 's1bP78m!'  # Replace with your secret key
 
 # Create the LoginManager instance
 login_manager = LoginManager()
@@ -29,16 +26,11 @@ login_manager.init_app(app)
 class User(UserMixin):
     def __init__(self, user_id):
         self.id = user_id
-#pdb.set_trace()
 
 # Simulated user data
-User_Id = env_vars['USER_ID']
-Pass_WD = env_vars['PASS_WD']
-
-users = {User_Id: Pass_WD}  # Replace with your user data
+users = {'justin18': '#267Abkl!'}  # Replace with your user data
 
 # Login route
-@app.route('/', methods=['POST', 'GET'])
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     if request.method == 'POST':
@@ -79,11 +71,24 @@ def load_user(user_id):
 # Set the login view
 login_manager.login_view = 'login'
 
+
+load_dotenv()  # Load environment variables from .env file
+
 # conversational memory
 conversational_memory = ConversationBufferWindowMemory(
     memory_key='chat_history',
     k=5,
     return_messages=True
+)
+
+text_field = "text"
+index_name = "complication"
+# switch back to normal index for langchain
+index = pinecone.Index(index_name)
+embed = OpenAIEmbeddings()
+
+vectorstore = Pinecone(
+    index, embed.embed_query, text_field
 )
 
 conversation_history = []
@@ -108,7 +113,8 @@ def chat():
     print("Selected option:", option)
     print("Additional text:", additional_text)
     
-    
+    #pdb.set_trace()
+    env_vars = dotenv_values('.env')
     # Set your OpenAI API key
     
     #openai_api_key = os.getenv("OPENAI_API_KEY")
@@ -121,34 +127,18 @@ def chat():
         model_name='gpt-3.5-turbo',
         temperature=0.0
     )
-    index_name=""
-    PINECONE_API_KEY = ""
-    PINECONE_ENV = ""
     if(option == "cdc_diabetes"):
         PINECONE_API_KEY = env_vars['PINECONE_KEY_cdc']
         PINECONE_ENV = env_vars['PINECONE_ENVIRON_cdc']
-        index_name="diabetes"
-    elif(option=="diabetes"):
+    else:
         PINECONE_API_KEY = env_vars['PINECONE_KEY']
         PINECONE_ENV = env_vars['PINECONE_ENVIRON']
-        index_name="complication"
-
-    text_field = "text"
-    # switch back to normal index for langchain
-    index = pinecone.Index(index_name)
-    embed = OpenAIEmbeddings()
-
-    vectorstore = Pinecone(
-        index, embed.embed_query, text_field
-    )
-
     #PINECONE_API_KEY = getpass.getpass("Pinecone API Key:")
     # initialize pinecone
-    if(PINECONE_API_KEY != ""):
-        pinecone.init(
-            api_key=PINECONE_API_KEY,  # find at app.pinecone.io
-            environment=PINECONE_ENV,  # next to api key in console
-        )
+    pinecone.init(
+        api_key=PINECONE_API_KEY,  # find at app.pinecone.io
+        environment=PINECONE_ENV,  # next to api key in console
+    )
     # retrieval qa chain
     qa = RetrievalQA.from_chain_type(
         llm=llm,
@@ -176,6 +166,7 @@ def chat():
         early_stopping_method='generate',
         memory=conversational_memory
     )
+
     
     conversation_history = []
     # Append user message to conversation history
@@ -239,23 +230,13 @@ def get_highest_score(items):
     else:
         return ""
 
-def query_cdc_embedding(input_text, index_name):
+def query_cdc_embedding(input_text, index):
 
     #https://blog.baeke.info/2023/03/16/pinecone-and-openai-magic-a-guide-to-finding-your-long-lost-blog-posts-with-vectorized-search-and-chatgpt/
  
     # set index; must exist
     #index = pinecone.Index('diabetes')
-    text_field = "text"
-    #index_name = "complication"
-    # switch back to normal index for langchain
-    index = pinecone.Index(index_name)
-    embed = OpenAIEmbeddings()
-
-    vectorstore = Pinecone(
-        index, embed.embed_query, text_field
-    )
-
-    #index = pinecone.Index(index)
+    index = pinecone.Index(index)
 
     #query = "what is diabetets?"
     # vectorize with OpenAI text-emebdding-ada-002
@@ -335,7 +316,7 @@ def generate_response(message, option,additional_text):
             reply = "From ChatGPT: " + reply
         return reply
     elif option == "cdc_diabetes":
-        pdb.set_trace()
+        #pdb.set_trace()
         #queries = [
         #    {'query': input_text}
         #]
@@ -345,21 +326,17 @@ def generate_response(message, option,additional_text):
         if not reply.startswith("Answer from cdc.gov/diabetes: "):
                 reply = "Answer from cdc.gov/diabetes: " + reply
         return reply
-    elif option == "diabetes":
-        pdb.set_trace()
+    else:
+        #pdb.set_trace()
         #result = search_pinecone_index(index_name, input_text)
         #print(result)
         #result = agent(input_text)
         #reply2 = result
-        reply = query_cdc_embedding(input_text, "complication")
-        if not reply.startswith("Answer from diabetes.org: "):
-                reply = "Answer from diabetes.org: " + reply
-        return reply
-        #reply2 = response_from_pinecone_index(input_text)
-        #if not reply2.startswith("Answer from diabetes.org"):
-        #    reply2 = "Answer from diabetes.org: " + reply2
+        reply2 = response_from_pinecone_index(input_text)
+        if not reply2.startswith("Answer from diabetes.org"):
+            reply2 = "Answer from diabetes.org: " + reply2
         #print(response)
-        #return reply2
+        return reply2
     #return response
 
 if __name__ == '__main__':

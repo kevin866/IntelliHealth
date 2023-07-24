@@ -52,15 +52,12 @@
             padding: 5px;
         }
         .option-container {
-            font-family: Arial, sans-serif;
             display: flex;
             align-items: center;
             margin-bottom: 10px;
-            font-size: 16px;
         }
         .option-container label {
             margin-right: 10px;
-            color: blue;
         }
         .option-container select {
             width: 60%;
@@ -70,25 +67,14 @@
     </style>
 </head>
 <body>
-    <h1>Welcome to healthcare recommendations system for diabetes</h1>
-    <h2>Chatbot for diabetes health care</h2>
-    <h2><span style="color: blue;">3 availabe options to query from</span></h2>
+    <h1>Protected Page</h1>
+    <p>Welcome, {{ current_user.id }}!</p>
+    <p>Debug: Protected page rendered</p>
    
-    <div class="option-container">
-        <label>Select option:</label>
-        <input type="radio" name="select-option" id="select-option-input_text" value="input_text" checked>
-        <label for="select-option-input_text">Query with custom input text</label>
-        
-        <input type="radio" name="select-option" id="select-option-diabetes" value="diabetes">
-        <label for="select-option-diabetes">Query with knowledgebase diabetes.org</label>
-        
-        <input type="radio" name="select-option" id="select-option-cdc_diabetes" value="cdc_diabetes">
-        <label for="select-option-cdc_diabetes">Query with knowledgebase cdc.gov/diabetes</label>
-    </div>
     <div class="custom-text">
-        <input type="text" id="url-input" placeholder="Enter URL to click button Extract Text">
+        <input type="text" id="url-input" placeholder="Enter URL">
         <button type="button" id="extract-button">Extract Text</button>
-        <textarea id="additional-text" class="input-text" placeholder="Or enter or paste text here..."></textarea>
+        <textarea id="additional-text" class="input-text" placeholder="Enter or paste text here..."></textarea>
     </div>
     <div class="chat-container">
 
@@ -98,7 +84,18 @@
 
         <!-- Selection options -->
         <!-- <option value="chatgpt">Query by ChatGPT</option> -->
-        
+        <div class="option-container">
+            <label>Select option:</label>
+            <input type="radio" name="select-option" id="select-option-input_text" value="input_text" checked>
+            <label for="select-option-input_text">Query with input text</label>
+            
+            <input type="radio" name="select-option" id="select-option-diabetes" value="diabetes">
+            <label for="select-option-diabetes">Query with diabetes.org</label>
+            
+            <input type="radio" name="select-option" id="select-option-cdc_diabetes" value="cdc_diabetes">
+            <label for="select-option-cdc_diabetes">Query with cdc.gov/diabetes</label>
+        </div>
+
         <div id="conversation"></div>
         <div class="input-container">
             
