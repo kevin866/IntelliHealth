@@ -1,6 +1,50 @@
-import React, {Component} from 'react';
-import { Button, Input, Card, Form, InputNumber, Tabs} from 'antd';
+
+
+// import React, { useState } from 'react';
+// import '../styles/SelectionButton.css'; 
+
+// const SelectionButton = () => {
+// const [isSelected1, setIsSelected1] = useState(false);
+// const [isSelected2, setIsSelected2] = useState(false);
+
+// const handleClick1 = () => {
+// setIsSelected1(!isSelected1);
+// };
+// const handleClick2 = () => {
+// setIsSelected2(!isSelected2);
+// };
+
+//   return (
+//     <div>
+//         <button
+//             onClick={handleClick1}
+//             className={`selection-button ${isSelected1 ? 'selected' : ''}`}
+//             >
+//             {isSelected1 ? 'Male' : 'Male'}
+//         </button>
+//         <button
+//             onClick={handleClick2}
+//             className={`selection-button ${isSelected2 ? 'selected' : ''}`}
+//             >
+//             {isSelected2 ? 'Female' : 'Female'}
+//         </button>
+
+//     </div>
+    
+//   );
+// };
+
+// export default SelectionButton;
+
+
+
+
+import React, { Component } from 'react';
+import { Button, Input, Card, Form, InputNumber, Tabs } from 'antd';
 import axios from 'axios';
+import SelectionButton from './SelectionButton'; // Import the SelectionButton component
+
+
 
 const ASK_QUETIONS_URL = 'http://127.0.0.1:5000/api/v1/chat/'
 const QUOTE_MODEL_URL = 'http://127.0.0.1:5000/api/v1/model/prediction'
@@ -23,9 +67,12 @@ class Physician extends Component {
             hbA1cLevel: 6.6,
             bloodGlucoseLevel: 140,
             currentPrediction: "Your prediction will be displayed here",
+            isSelected1: false,
+            isSelected2: false,
         }
         this.formRef = React.createRef();
     }
+
 
     onClickExample1 = async () => {
         console.log("clicked example 1");
@@ -102,6 +149,28 @@ class Physician extends Component {
         console.log("Data set to example 2");
         // console.log(this.state.gender);
     }
+
+ 
+    
+    onClickFemale = () => {
+        this.setState((prevState) => ({
+          isSelected1: !prevState.isSelected1,
+          gender: 0,
+        }));
+        this.formRef.current.setFieldsValue({
+          gender: 0,
+        });
+      };
+    
+    onClickMale = () => {
+    this.setState((prevState) => ({
+        isSelected2: !prevState.isSelected2,
+        gender: 1,
+    }));
+    this.formRef.current.setFieldsValue({
+        gender: 1,
+    });
+      };
 
     onClickQuetions = async () => {
         console.log("clicked ask quetions");
@@ -268,6 +337,18 @@ class Physician extends Component {
                         <Form ref={this.formRef}>
                             <Form.Item label="Gender" name="gender" initialValue={0} rules={[{ required: true, message: 'Please input valid numbers'}]}>
                                 <InputNumber min={0} max={1} onChange={this.onChangeGender} precision={0}/>
+                            </Form.Item>
+                            <Form.Item label="Gender" name="gender" rules={[{ required: true }]}>
+                            <SelectionButton
+                                isSelected={this.state.isSelected1}
+                                onSelect={this.onClickFemale}
+                                label="Male"
+                            />
+                            <SelectionButton
+                                isSelected={this.state.isSelected2}
+                                onSelect={this.onClickMale}
+                                label="Female"
+                            />
                             </Form.Item>
                             <Form.Item label="Age" name="age" initialValue={80} rules={[{ required: true, message: 'Please input valid numbers'}]}>
                                 <InputNumber min={0} max={100} onChange={this.onChangeAge} precision={0}/>

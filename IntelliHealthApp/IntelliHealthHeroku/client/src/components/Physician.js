@@ -6,6 +6,7 @@ const ASK_QUETIONS_URL = 'https://intellihealth-d355d13bbdb9.herokuapp.com//api/
 const QUOTE_MODEL_URL = 'https://intellihealth-d355d13bbdb9.herokuapp.com//api/v1/model/prediction'
 const { TextArea } = Input;
 
+
 class Physician extends Component {
     constructor(props) {
         super(props);
@@ -26,6 +27,8 @@ class Physician extends Component {
         }
         this.formRef = React.createRef();
     }
+
+
 
     onClickExample1 = async () => {
         console.log("clicked example 1");
@@ -64,6 +67,7 @@ class Physician extends Component {
         console.log("Data set to example 1");
         // console.log(this.state.gender);
     }
+
 
     onClickExample2 = async () => {
         console.log("clicked example 2");
@@ -127,6 +131,7 @@ class Physician extends Component {
         const response = await this.onQuoteModels();
         console.log(response);
     }
+
 
     onChangeQuestions = async (e) => {
         await this.setState({ currentQuestion : e.target.value });
@@ -255,6 +260,7 @@ class Physician extends Component {
         })
     }
 
+
     render() {
         return (
             <div className="Main" style={{fontWeight: "bold"}}>
@@ -269,7 +275,7 @@ class Physician extends Component {
                             <Form.Item label="Gender" name="gender" initialValue={0} rules={[{ required: true, message: 'Please input valid numbers'}]}>
                                 <InputNumber min={0} max={1} onChange={this.onChangeGender} precision={0}/>
                             </Form.Item>
-                            <Form.Item label="Age" name="age" initialValue={80} rules={[{ required: true, message: 'Please input valid numbers'}]}>
+                            <Form.Item label="Age" name="age(years)" initialValue={80} rules={[{ required: true, message: 'Please input valid numbers'}]}>
                                 <InputNumber min={0} max={100} onChange={this.onChangeAge} precision={0}/>
                             </Form.Item>
                             <Form.Item label="Hypertension" name="hypertension" initialValue={0} rules={[{ required: true, message: 'Please input valid numbers'}]}>
@@ -278,7 +284,7 @@ class Physician extends Component {
                             <Form.Item label="Heart Disease" name="heartdisease" initialValue={1} rules={[{ required: true, message: 'Please input valid numbers'}]}>
                                 <InputNumber min={0} max={1} onChange={this.onChangeHeartdisease} precision={0}/>
                             </Form.Item>
-                            <Form.Item label="Smoking History" name="smokingHistory" initialValue={4} rules={[{ required: true, message: 'Please input valid numbers'}]}>
+                            <Form.Item label="Smoking History" name="smokingHistory(years)" initialValue={4} rules={[{ required: true, message: 'Please input valid numbers'}]}>
                                 <InputNumber min={0} max={100} onChange={this.onChangeSmokingHistory} precision={2}/>
                             </Form.Item>
                             <Form.Item label="BMI" name="bmi" initialValue={25.19} rules={[{ required: true, message: 'Please input valid numbers'}]}>
