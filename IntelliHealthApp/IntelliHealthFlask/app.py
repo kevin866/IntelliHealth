@@ -5,6 +5,7 @@ from service.get_gpt_service import GptService
 from service.get_model_service import ModelService
 import langchain_response
 import openai
+import pdb
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
@@ -19,7 +20,16 @@ def health():  # put application's code here
 def chat(chat_content):
     response = langchain_response.chatbot(chat_content)
     return {"text":response}
+
+
 """
+def chat(chat_content):
+    pdb.set_trace()
+    response = langchain_response.chatbot(chat_content)
+    #return {"text":response}
+    print("Response:", response)
+    return jsonify({'message': response}) #, 'additionalText': additional_text
+
     cur_service = GptService()
     response_content = cur_service.get_gpt_response(chat_content)
     print(type(response_content))
