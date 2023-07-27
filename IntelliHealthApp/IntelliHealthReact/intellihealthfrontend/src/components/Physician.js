@@ -67,8 +67,12 @@ class Physician extends Component {
             hbA1cLevel: 6.6,
             bloodGlucoseLevel: 140,
             currentPrediction: "Your prediction will be displayed here",
-            isSelected1: false,
-            isSelected2: false,
+            maleisSelected1: false,
+            femaleisSelected2: false,
+            hyperisSelected1: false,
+            hyperisSelected2: false,
+            hedisisSelected1:false,
+            hedisisSelected2:false
         }
         this.formRef = React.createRef();
     }
@@ -150,11 +154,48 @@ class Physician extends Component {
         // console.log(this.state.gender);
     }
 
- 
+    onClickhypertension1 = () => {
+        this.setState((prevState) => ({
+            hyperisSelected1: !prevState.hyperisSelected1,
+            hypertension: 0,
+        }));
+        this.formRef.current.setFieldsValue({
+          hypertension: 0,
+        });
+      };
+    
+    onClickhypertension2 = () => {
+        this.setState((prevState) => ({
+            hyperisSelected2: !prevState.hyperisSelected2,
+            hypertension: 1,
+        }));
+        this.formRef.current.setFieldsValue({
+            hypertension: 1,
+        });
+    };
+    onClickheartdis2 = () => {
+        this.setState((prevState) => ({
+            hedisisSelected2: !prevState.hedisisSelected2,
+            heartdisease: 1,
+        }));
+        this.formRef.current.setFieldsValue({
+            heartdisease: 1,
+        });
+    };
+
+    onClickheartdis1 = () => {
+        this.setState((prevState) => ({
+            hedisisSelected1: !prevState.hedisisSelected1,
+            heartdisease: 0,
+        }));
+        this.formRef.current.setFieldsValue({
+            heartdisease: 0,
+        });
+    };
     
     onClickFemale = () => {
         this.setState((prevState) => ({
-          isSelected1: !prevState.isSelected1,
+          femaleisSelected2: !prevState.femaleisSelected2,
           gender: 0,
         }));
         this.formRef.current.setFieldsValue({
@@ -164,7 +205,7 @@ class Physician extends Component {
     
     onClickMale = () => {
     this.setState((prevState) => ({
-        isSelected2: !prevState.isSelected2,
+        maleisSelected1: !prevState.maleisSelected1,
         gender: 1,
     }));
     this.formRef.current.setFieldsValue({
@@ -335,40 +376,69 @@ class Physician extends Component {
                         </p>
 
                         <Form ref={this.formRef}>
-                            <Form.Item label="Gender" name="gender" initialValue={0} rules={[{ required: true, message: 'Please input valid numbers'}]}>
+                            {/* <Form.Item label="Gender" name="gender" initialValue={0} rules={[{ required: true, message: 'Please input valid numbers'}]}>
                                 <InputNumber min={0} max={1} onChange={this.onChangeGender} precision={0}/>
-                            </Form.Item>
+                            </Form.Item> */}
                             <Form.Item label="Gender" name="gender" rules={[{ required: true }]}>
                             <SelectionButton
-                                isSelected={this.state.isSelected1}
-                                onSelect={this.onClickFemale}
+                                isSelected={this.state.maleisSelected1}
+                                onSelect={this.onClickMale}
                                 label="Male"
                             />
                             <SelectionButton
-                                isSelected={this.state.isSelected2}
-                                onSelect={this.onClickMale}
+                                isSelected={this.state.femaleisSelected2}
+                                onSelect={this.onClickFemale}
                                 label="Female"
                             />
                             </Form.Item>
-                            <Form.Item label="Age" name="age" initialValue={80} rules={[{ required: true, message: 'Please input valid numbers'}]}>
+                            {/* <Form.Item label="Hypertension" name="hypertension" initialValue={0} rules={[{ required: true, message: 'Please input valid numbers'}]}>
+                                <InputNumber min={0} max={1} onChange={this.onChangeHypertension} precision={0}/>
+                            </Form.Item> */}
+                            <Form.Item label="Hypertension" name="hypertension" rules={[{ required: true }]}>
+                            <SelectionButton
+                                isSelected={this.state.hyperisSelected2}
+                                onSelect={this.onClickhypertension2}
+                                label="Yes"
+                            />
+                            <SelectionButton
+                                isSelected={this.state.hyperisSelected1}
+                                onSelect={this.onClickhypertension1}
+                                label="No"
+                            />
+                            </Form.Item>
+                            {/* <Form.Item label="Heart Disease" name="heartdisease" initialValue={1} rules={[{ required: true, message: 'Please input valid numbers'}]}>
+                                <InputNumber min={0} max={1} onChange={this.onChangeHeartdisease} precision={0}/>
+                            </Form.Item> */}
+                            
+                            
+                            <Form.Item label="Heart Disease" name="heartdisease" rules={[{ required: true }]}>
+                            <SelectionButton
+                                isSelected={this.state.hedisisSelected2}
+                                onSelect={this.onClickheartdis2}
+                                label="Yes"
+                            />
+                            <SelectionButton
+                                isSelected={this.state.hedisisSelected1}
+                                onSelect={this.onClickheartdis1}
+                                label="No"
+                            />
+                            </Form.Item>
+
+                            <Form.Item label="Age (years)" name="age" initialValue={80} rules={[{ required: true, message: 'Please input valid numbers'}]}>
                                 <InputNumber min={0} max={100} onChange={this.onChangeAge} precision={0}/>
                             </Form.Item>
-                            <Form.Item label="Hypertension" name="hypertension" initialValue={0} rules={[{ required: true, message: 'Please input valid numbers'}]}>
-                                <InputNumber min={0} max={1} onChange={this.onChangeHypertension} precision={0}/>
-                            </Form.Item>
-                            <Form.Item label="Heart Disease" name="heartdisease" initialValue={1} rules={[{ required: true, message: 'Please input valid numbers'}]}>
-                                <InputNumber min={0} max={1} onChange={this.onChangeHeartdisease} precision={0}/>
-                            </Form.Item>
-                            <Form.Item label="Smoking History" name="smokingHistory" initialValue={4} rules={[{ required: true, message: 'Please input valid numbers'}]}>
+
+                            <Form.Item label="Smoking History (years)" name="smokingHistory" initialValue={4} rules={[{ required: true, message: 'Please input valid numbers'}]}>
                                 <InputNumber min={0} max={100} onChange={this.onChangeSmokingHistory} precision={2}/>
                             </Form.Item>
-                            <Form.Item label="BMI" name="bmi" initialValue={25.19} rules={[{ required: true, message: 'Please input valid numbers'}]}>
+
+                            <Form.Item label="BMI (kg/m2)" name="bmi" initialValue={25.19} rules={[{ required: true, message: 'Please input valid numbers'}]}>
                                 <InputNumber min={0} max={100} onChange={this.onChangeBmi} precision={2}/>
                             </Form.Item>
-                            <Form.Item label="HbA1c Level" name="hbA1cLevel" initialValue={6.6} rules={[{ required: true, message: 'Please input valid numbers'}]}>
+                            <Form.Item label="HbA1c Level (%)" name="hbA1cLevel" initialValue={6.6} rules={[{ required: true, message: 'Please input valid numbers'}]}>
                                 <InputNumber min={0} max={100} onChange={this.onChangeHbA1cLevel} precision={2}/>
                             </Form.Item>
-                            <Form.Item label="Blood Glucose Level" name="bloodGlucoseLevel" initialValue={140} rules={[{ required: true, message: 'Please input valid numbers'}]}>
+                            <Form.Item label="Blood Glucose Level (mg/dL)" name="bloodGlucoseLevel" initialValue={140} rules={[{ required: true, message: 'Please input valid numbers'}]}>
                                 <InputNumber min={0} max={600} onChange={this.onChangeBloodGlucoseLevel} precision={2}/>
                             </Form.Item>
 
@@ -401,9 +471,11 @@ class Physician extends Component {
                     </p>
                     </Card>
 
-                        </div>
-                    </Tabs.TabPane>
+            </div>
+                <p>
 
+                </p>
+                </Tabs.TabPane>
                     <Tabs.TabPane tab="Chatbot" key="chatbot">
                         IntelliHealth ChatBot
                         <p style={{fontWeight: "normal", fontSize: "15px"}}>
@@ -411,7 +483,7 @@ class Physician extends Component {
                         </p>
 
 
-                        <TextArea showCount maxLength={100} onChange={this.onChangeQuestions} style={{ width: 800, height: 350 }} />
+                        <TextArea showCount maxLength={100} onChange={this.onChangeQuestions} style={{ width: 800, height: 50}} />
                         <p>
 
                         </p>
