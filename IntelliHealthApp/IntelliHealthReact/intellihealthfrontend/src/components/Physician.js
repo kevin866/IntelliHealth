@@ -40,9 +40,10 @@
 
 
 import React, { Component } from 'react';
-import { Button, Input, Card, Form, InputNumber, Tabs } from 'antd';
+import { Button, Input, Card, Form, InputNumber, Tabs, Space} from 'antd';
 import axios from 'axios';
 import SelectionButton from './SelectionButton'; // Import the SelectionButton component
+
 
 
 
@@ -379,7 +380,16 @@ class Physician extends Component {
                             {/* <Form.Item label="Gender" name="gender" initialValue={0} rules={[{ required: true, message: 'Please input valid numbers'}]}>
                                 <InputNumber min={0} max={1} onChange={this.onChangeGender} precision={0}/>
                             </Form.Item> */}
-                            <Form.Item label="Gender" name="gender" rules={[{ required: true }]}>
+                            <Form.Item label="Gender" name="gender" rules={[
+                                                                            {
+                                                                            required: true,
+                                                                            message: 'Please select an option',
+                                                                            validator: (_, value) =>
+                                                                                value ? Promise.resolve() : Promise.reject('Please select an option'),
+                                                                            },
+                                                                        ]}  
+                                                                        style={{ display: 'flex', justifyContent: 'center' }}
+                            >
                             <SelectionButton
                                 isSelected={this.state.maleisSelected1}
                                 onSelect={this.onClickMale}
@@ -394,7 +404,16 @@ class Physician extends Component {
                             {/* <Form.Item label="Hypertension" name="hypertension" initialValue={0} rules={[{ required: true, message: 'Please input valid numbers'}]}>
                                 <InputNumber min={0} max={1} onChange={this.onChangeHypertension} precision={0}/>
                             </Form.Item> */}
-                            <Form.Item label="Hypertension" name="hypertension" rules={[{ required: true }]}>
+                            <Form.Item label="Hypertension" name="hypertension" rules={[
+                                                                            {
+                                                                            required: true,
+                                                                            message: 'Please select an option',
+                                                                            validator: (_, value) =>
+                                                                                value ? Promise.resolve() : Promise.reject('Please select an option'),
+                                                                            },
+                                                                        ]}  
+                                                                        style={{ display: 'flex', justifyContent: 'center' }}
+                            >
                             <SelectionButton
                                 isSelected={this.state.hyperisSelected2}
                                 onSelect={this.onClickhypertension2}
@@ -411,7 +430,16 @@ class Physician extends Component {
                             </Form.Item> */}
                             
                             
-                            <Form.Item label="Heart Disease" name="heartdisease" rules={[{ required: true }]}>
+                            {/* <Form.Item label="Heart Disease" name="heartdisease" rules={[
+                                                                            {
+                                                                            required: true,
+                                                                            message: 'Please select an option',
+                                                                            validator: (_, value) =>
+                                                                                value ? Promise.resolve() : Promise.reject('Please select an option'),
+                                                                            },
+                                                                        ]}  
+                                                                        style={{ display: 'flex', justifyContent: 'center' }}
+                            >
                             <SelectionButton
                                 isSelected={this.state.hedisisSelected2}
                                 onSelect={this.onClickheartdis2}
@@ -422,9 +450,45 @@ class Physician extends Component {
                                 onSelect={this.onClickheartdis1}
                                 label="No"
                             />
+                            </Form.Item> */}
+                            <Form.Item
+                            label="Heart Disease"
+                            name="heartdisease"
+                            rules={[
+                                {
+                                required: true,
+                                message: 'Please select an option',
+                                validator: (_, value) =>
+                                    value ? Promise.resolve() : Promise.reject('Please select an option'),
+                                },
+                            ]}
+                            labelAlign="left"
+                            wrapperCol={{ span: 16 }} // Adjust the span value to control the width of the buttons container
+                            >
+                            <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                <SelectionButton
+                                isSelected={this.state.hedisisSelected2}
+                                onSelect={this.onClickheartdis2}
+                                label="Yes"
+                                />
+                                <SelectionButton
+                                isSelected={this.state.hedisisSelected1}
+                                onSelect={this.onClickheartdis1}
+                                label="No"
+                                />
+                            </div>
                             </Form.Item>
 
-                            <Form.Item label="Age (years)" name="age" initialValue={80} rules={[{ required: true, message: 'Please input valid numbers'}]}>
+                            <Form.Item label="Age (years)" name="age" initialValue={80} rules={[
+                                                                            {
+                                                                            required: true,
+                                                                            message: 'Please select an option',
+                                                                            validator: (_, value) =>
+                                                                                value ? Promise.resolve() : Promise.reject('Please select an option'),
+                                                                            },
+                                                                        ]}  
+                                                                        style={{ display: 'flex', justifyContent: 'center' }}
+                            >
                                 <InputNumber min={0} max={100} onChange={this.onChangeAge} precision={0}/>
                             </Form.Item>
 
