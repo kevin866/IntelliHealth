@@ -434,7 +434,7 @@ class Physician extends Component {
                                 </Form.Item>
                             </Col>
                             </Row>
-                            <Row gutter={[8, 0]}>
+                            <Row gutter={[16, 0]}>
                             <Col span={12}>
                                 <Form.Item
                                 label="Hypertension"
@@ -500,7 +500,7 @@ class Physician extends Component {
                                                                                     value ? Promise.resolve() : Promise.reject('Please select an option'),
                                                                                 },
                                                                             ]}  
-                                                                            labelAlign="left" wrapperCol={{ span: 26 }} >
+                                                                            labelAlign="left" wrapperCol={{ span: 29 }} >
                                     <InputNumber min={0} max={100} onChange={this.onChangeBmi} precision={2}/>
                                 </Form.Item>
                             </Col>
