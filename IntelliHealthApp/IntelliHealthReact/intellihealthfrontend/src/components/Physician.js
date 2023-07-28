@@ -40,7 +40,7 @@
 
 
 import React, { Component } from 'react';
-import { Button, Input, Card, Form, InputNumber, Tabs, Space} from 'antd';
+import { Button, Input, Card, Form, InputNumber, Tabs, Col, Row} from 'antd';
 import axios from 'axios';
 import SelectionButton from './SelectionButton'; // Import the SelectionButton component
 
@@ -371,115 +371,115 @@ class Physician extends Component {
             <div className="Main" style={{fontWeight: "bold"}}>
                 <Tabs defaultActiveKey = "prediction">
                     <Tabs.TabPane tab="Prediction" key="prediction">
-                        IntelliHealth Prediction
+                        <p className="larger-text">IntelliHealth Prediction</p>
                         <p style={{fontWeight: "normal", fontSize: "15px"}}>
                             Please input the following information to get a prediction of your risk of getting diabetes.
                         </p>
-
+                        
                         <Form ref={this.formRef}>
-                            {/* <Form.Item label="Gender" name="gender" initialValue={0} rules={[{ required: true, message: 'Please input valid numbers'}]}>
-                                <InputNumber min={0} max={1} onChange={this.onChangeGender} precision={0}/>
-                            </Form.Item> */}
-                            <Form.Item label="Gender" name="gender" rules={[
-                                                                            {
-                                                                            required: true,
-                                                                            message: 'Please select an option',
-                                                                            validator: (_, value) =>
-                                                                                value ? Promise.resolve() : Promise.reject('Please select an option'),
-                                                                            },
-                                                                        ]}  
-                                                                        style={{ display: 'flex', justifyContent: 'center' }}
-                            >
-                            <SelectionButton
-                                isSelected={this.state.maleisSelected1}
-                                onSelect={this.onClickMale}
-                                label="Male"
-                            />
-                            <SelectionButton
-                                isSelected={this.state.femaleisSelected2}
-                                onSelect={this.onClickFemale}
-                                label="Female"
-                            />
-                            </Form.Item>
-                            {/* <Form.Item label="Hypertension" name="hypertension" initialValue={0} rules={[{ required: true, message: 'Please input valid numbers'}]}>
-                                <InputNumber min={0} max={1} onChange={this.onChangeHypertension} precision={0}/>
-                            </Form.Item> */}
-                            <Form.Item label="Hypertension" name="hypertension" rules={[
-                                                                            {
-                                                                            required: true,
-                                                                            message: 'Please select an option',
-                                                                            validator: (_, value) =>
-                                                                                value ? Promise.resolve() : Promise.reject('Please select an option'),
-                                                                            },
-                                                                        ]}  
-                                                                        style={{ display: 'flex', justifyContent: 'center' }}
-                            >
-                            <SelectionButton
-                                isSelected={this.state.hyperisSelected2}
-                                onSelect={this.onClickhypertension2}
-                                label="Yes"
-                            />
-                            <SelectionButton
-                                isSelected={this.state.hyperisSelected1}
-                                onSelect={this.onClickhypertension1}
-                                label="No"
-                            />
-                            </Form.Item>
-                            {/* <Form.Item label="Heart Disease" name="heartdisease" initialValue={1} rules={[{ required: true, message: 'Please input valid numbers'}]}>
-                                <InputNumber min={0} max={1} onChange={this.onChangeHeartdisease} precision={0}/>
-                            </Form.Item> */}
-                            
-                            
-                            {/* <Form.Item label="Heart Disease" name="heartdisease" rules={[
-                                                                            {
-                                                                            required: true,
-                                                                            message: 'Please select an option',
-                                                                            validator: (_, value) =>
-                                                                                value ? Promise.resolve() : Promise.reject('Please select an option'),
-                                                                            },
-                                                                        ]}  
-                                                                        style={{ display: 'flex', justifyContent: 'center' }}
-                            >
-                            <SelectionButton
-                                isSelected={this.state.hedisisSelected2}
-                                onSelect={this.onClickheartdis2}
-                                label="Yes"
-                            />
-                            <SelectionButton
-                                isSelected={this.state.hedisisSelected1}
-                                onSelect={this.onClickheartdis1}
-                                label="No"
-                            />
-                            </Form.Item> */}
-                            <Form.Item
-                            label="Heart Disease"
-                            name="heartdisease"
-                            rules={[
-                                {
-                                required: true,
-                                message: 'Please select an option',
-                                validator: (_, value) =>
-                                    value ? Promise.resolve() : Promise.reject('Please select an option'),
-                                },
-                            ]}
-                            labelAlign="left"
-                            wrapperCol={{ span: 16 }} // Adjust the span value to control the width of the buttons container
-                            >
-                            <div style={{ display: 'flex', justifyContent: 'center' }}>
+                           
+                            <Row gutter={[16, 0]}>
+                            <Col span={12}>
+                                <Form.Item
+                                label="Gender"
+                                name="gender"
+                                rules={[
+                                    {
+                                    required: true,
+                                    message: 'Please select an option',
+                                    validator: (_, value) =>
+                                        value ? Promise.resolve() : Promise.reject('Please select an option'),
+                                    },
+                                ]}
+                                labelAlign="left"
+                                wrapperCol={{ span: 24 }} // Adjust the span value to control the width of the buttons container
+                                >
                                 <SelectionButton
-                                isSelected={this.state.hedisisSelected2}
-                                onSelect={this.onClickheartdis2}
-                                label="Yes"
+                                    isSelected={this.state.maleisSelected1}
+                                    onSelect={this.onClickMale}
+                                    label="Male"
                                 />
                                 <SelectionButton
-                                isSelected={this.state.hedisisSelected1}
-                                onSelect={this.onClickheartdis1}
-                                label="No"
+                                    isSelected={this.state.femaleisSelected2}
+                                    onSelect={this.onClickFemale}
+                                    label="Female"
                                 />
-                            </div>
-                            </Form.Item>
-
-                            <Form.Item label="Age (years)" name="age" initialValue={80} rules={[
+                                </Form.Item>
+                            </Col>
+                            <Col span={12}>
+                                <Form.Item
+                                label="Heart Disease"
+                                name="heartdisease"
+                                rules={[
+                                    {
+                                    required: true,
+                                    message: 'Please select an option',
+                                    validator: (_, value) =>
+                                        value ? Promise.resolve() : Promise.reject('Please select an option'),
+                                    },
+                                ]}
+                                labelAlign="left"
+                                wrapperCol={{ span: 16 }} // Adjust the span value to control the width of the buttons container
+                                >
+                                <SelectionButton
+                                    isSelected={this.state.hedisisSelected1}
+                                    onSelect={this.onClickheartdis1}
+                                    label="No"
+                                />
+                                <SelectionButton
+                                    isSelected={this.state.hedisisSelected1}
+                                    onSelect={this.onClickheartdis1}
+                                    label="Yes"
+                                />
+                                </Form.Item>
+                            </Col>
+                            </Row>
+                            <Row gutter={[8, 0]}>
+                            <Col span={12}>
+                                <Form.Item
+                                label="Hypertension"
+                                name="hypertension"
+                                rules={[
+                                    {
+                                    required: true,
+                                    message: 'Please select an option',
+                                    validator: (_, value) =>
+                                        value ? Promise.resolve() : Promise.reject('Please select an option'),
+                                    },
+                                ]}
+                                labelAlign="left"
+                                wrapperCol={{ span: 17 }} // Adjust the span value to control the width of the buttons container
+                                >
+                                <SelectionButton
+                                    isSelected={this.state.hyperisSelected2}
+                                    onSelect={this.onClickhypertension2}
+                                    label="Yes"
+                                />
+                                <SelectionButton
+                                    isSelected={this.state.hyperisSelected1}
+                                    onSelect={this.onClickhypertension1}
+                                    label="No"
+                                />
+                                </Form.Item>
+                            </Col>
+                            <Col span={12}>
+                                <Form.Item label="Age (years)" name="age" initialValue={80} rules={[
+                                                                                {
+                                                                                required: true,
+                                                                                message: 'Please select an option',
+                                                                                validator: (_, value) =>
+                                                                                    value ? Promise.resolve() : Promise.reject('Please select an option'),
+                                                                                },
+                                                                            ]}  
+                                                                            labelAlign="left"
+                                wrapperCol={{ span: 24 }} >
+                                    <InputNumber min={0} max={100} onChange={this.onChangeAge} precision={0}/>
+                                </Form.Item>
+                            </Col>
+                            </Row>
+                            <Row gutter={[16, 0]}>
+                            <Col span={12}>
+                            <Form.Item label="Smoking History (years)" name="smokingHistory" initialValue={4} rules={[
                                                                             {
                                                                             required: true,
                                                                             message: 'Please select an option',
@@ -487,25 +487,37 @@ class Physician extends Component {
                                                                                 value ? Promise.resolve() : Promise.reject('Please select an option'),
                                                                             },
                                                                         ]}  
-                                                                        style={{ display: 'flex', justifyContent: 'center' }}
-                            >
-                                <InputNumber min={0} max={100} onChange={this.onChangeAge} precision={0}/>
+                                                                        labelAlign="left" wrapperCol={{ span: 8 }} >
+                                   <InputNumber min={0} max={100} onChange={this.onChangeSmokingHistory} precision={2}/>
                             </Form.Item>
-
-                            <Form.Item label="Smoking History (years)" name="smokingHistory" initialValue={4} rules={[{ required: true, message: 'Please input valid numbers'}]}>
-                                <InputNumber min={0} max={100} onChange={this.onChangeSmokingHistory} precision={2}/>
-                            </Form.Item>
-
-                            <Form.Item label="BMI (kg/m2)" name="bmi" initialValue={25.19} rules={[{ required: true, message: 'Please input valid numbers'}]}>
-                                <InputNumber min={0} max={100} onChange={this.onChangeBmi} precision={2}/>
-                            </Form.Item>
-                            <Form.Item label="HbA1c Level (%)" name="hbA1cLevel" initialValue={6.6} rules={[{ required: true, message: 'Please input valid numbers'}]}>
+                            </Col>
+                            <Col span={12}>
+                                <Form.Item label="BMI (kg/m2)" name="bmi" initialValue={25.19} rules={[
+                                                                                {
+                                                                                required: true,
+                                                                                message: 'Please select an option',
+                                                                                validator: (_, value) =>
+                                                                                    value ? Promise.resolve() : Promise.reject('Please select an option'),
+                                                                                },
+                                                                            ]}  
+                                                                            labelAlign="left" wrapperCol={{ span: 26 }} >
+                                    <InputNumber min={0} max={100} onChange={this.onChangeBmi} precision={2}/>
+                                </Form.Item>
+                            </Col>
+                            </Row>
+                            <Row gutter={[16, 0]}>
+                            <Col span={12}>
+                            <Form.Item label="HbA1c Level" name="hbA1cLevel" initialValue={6.6} rules={[{ required: true, message: 'Please input valid numbers'}]} labelAlign="left" wrapperCol={{ span: 19 }}>
                                 <InputNumber min={0} max={100} onChange={this.onChangeHbA1cLevel} precision={2}/>
                             </Form.Item>
-                            <Form.Item label="Blood Glucose Level (mg/dL)" name="bloodGlucoseLevel" initialValue={140} rules={[{ required: true, message: 'Please input valid numbers'}]}>
-                                <InputNumber min={0} max={600} onChange={this.onChangeBloodGlucoseLevel} precision={2}/>
-                            </Form.Item>
-
+                            </Col>
+                            <Col span={12}>
+                                <Form.Item label="Blood Glucose Level (mg/dL)" name="bloodGlucoseLevel" initialValue={140} rules={[{ required: true, message: 'Please input valid numbers'}]} labelAlign="left" wrapperCol={{ span: 1 }}>
+                                    <InputNumber min={0} max={600} onChange={this.onChangeBloodGlucoseLevel} precision={2}/>
+                                </Form.Item>
+                            </Col>
+                            </Row>
+                    
                         </Form>
 
                         <Button  type="primary" htmlType="submit" onClick={this.onClickExample1} style={{ margin: 20 }}> Example 1 </Button>
@@ -536,12 +548,14 @@ class Physician extends Component {
                     </Card>
 
             </div>
-                <p>
-
-                </p>
+            <p>
+            </p>
                 </Tabs.TabPane>
+                <p>
+                    
+                </p>
                     <Tabs.TabPane tab="Chatbot" key="chatbot">
-                        IntelliHealth ChatBot
+                        <p className="larger-text">IntelliHealth Prediction</p>
                         <p style={{fontWeight: "normal", fontSize: "15px"}}>
                             If you have any question, feel free to ask any questions about the diabetes
                         </p>

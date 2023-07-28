@@ -15,3 +15,15 @@
   background-color: blue; /* Filled with blue color when selected */
   color: white; /* Change the text color to white when selected */
 }
+
+.larger-text {
+  font-size: 18px;
+}
+
+.regular-text {
+  font-size: 16px;
+}
+
+.smaller-text {
+  font-size: 14px;
+}
