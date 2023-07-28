@@ -81,21 +81,45 @@ class Physician extends Component {
 
     onClickExample1 = async () => {
         console.log("clicked example 1");
-        await this.setState({ gender: 0 });
+        await this.setState((prevState) => ({
+            maleisSelected1: !prevState.maleisSelected1,
+            gender: 0,
+        }));
         this.formRef.current.setFieldsValue({
             gender: 0,
         });
+        if (this.state.femaleisSelected2) {
+            await this.setState((prevState) => ({
+                femaleisSelected2: !prevState.femaleisSelected2,
+            }));
+        }
+        if (this.state.hedisisSelected2) {
+            await this.setState((prevState) => ({
+                hedisisSelected2: !prevState.hedisisSelected2,
+            }));
+        }
+        if (this.state.hyperisSelected2) {
+            await this.setState((prevState) => ({
+                hyperisSelected2: !prevState.hyperisSelected2,
+            }));
+        }
         await this.setState({ age: 80 });
         this.formRef.current.setFieldsValue({
             age: 80,
         });
-        await this.setState({ hypertension: 0 });
-        this.formRef.current.setFieldsValue({
+        await this.setState((prevState) => ({
+            hyperisSelected1: !prevState.hyperisSelected1,
             hypertension: 0,
-        });
-        await this.setState({ heartdisease: 1 });
+        }));
         this.formRef.current.setFieldsValue({
-            heartdisease: 1,
+          hypertension: 0,
+        });
+        await this.setState((prevState) => ({
+            hedisisSelected1: !prevState.hedisisSelected1,
+            heartdisease: 0,
+        }));
+        this.formRef.current.setFieldsValue({
+            heartdisease: 0,
         });
         await this.setState({ smokingHistory: 4 });
         this.formRef.current.setFieldsValue({
@@ -119,19 +143,45 @@ class Physician extends Component {
 
     onClickExample2 = async () => {
         console.log("clicked example 2");
-        await this.setState({ gender: 1 });
-        this.formRef.current.setFieldsValue({
+        await this.setState((prevState) => ({
+            femaleisSelected2: !prevState.femaleisSelected2,
+            gender: 1,
+        }));
+            this.formRef.current.setFieldsValue({
             gender: 1,
         });
+        if (this.state.maleisSelected1) {
+            await this.setState((prevState) => ({
+                maleisSelected1: !prevState.maleisSelected1,
+                gender: 1,
+            }));
+        }
         await this.setState({ age: 90 });
         this.formRef.current.setFieldsValue({
             age: 90,
         });
-        await this.setState({ hypertension: 1 });
+        if (this.state.hyperisSelected1) {
+            await this.setState((prevState) => ({
+                hyperisSelected1: !prevState.hyperisSelected1,
+            }));
+        }
+        await this.setState((prevState) => ({
+            hyperisSelected2: !prevState.hyperisSelected2,
+            hypertension: 1,
+        }));
         this.formRef.current.setFieldsValue({
             hypertension: 1,
         });
-        await this.setState({ heartdisease: 1 });
+        
+        if (this.state.hedisisSelected1) {
+            await this.setState((prevState) => ({
+                hedisisSelected1: !prevState.hedisisSelected1,
+            }));
+        }
+        await this.setState((prevState) => ({
+            hedisisSelected2: !prevState.hedisisSelected2,
+            heartdisease: 1,
+        }));
         this.formRef.current.setFieldsValue({
             heartdisease: 1,
         });
@@ -197,21 +247,21 @@ class Physician extends Component {
     onClickFemale = () => {
         this.setState((prevState) => ({
           femaleisSelected2: !prevState.femaleisSelected2,
-          gender: 0,
+          gender: 1,
         }));
         this.formRef.current.setFieldsValue({
-          gender: 0,
+          gender: 1,
         });
       };
     
     onClickMale = () => {
-    this.setState((prevState) => ({
-        maleisSelected1: !prevState.maleisSelected1,
-        gender: 1,
-    }));
-    this.formRef.current.setFieldsValue({
-        gender: 1,
-    });
+        this.setState((prevState) => ({
+            maleisSelected1: !prevState.maleisSelected1,
+            gender: 0,
+        }));
+        this.formRef.current.setFieldsValue({
+            gender: 0,
+        });
       };
 
     onClickQuetions = async () => {
@@ -422,14 +472,14 @@ class Physician extends Component {
                                 wrapperCol={{ span: 16 }} // Adjust the span value to control the width of the buttons container
                                 >
                                 <SelectionButton
-                                    isSelected={this.state.hedisisSelected1}
-                                    onSelect={this.onClickheartdis1}
-                                    label="No"
+                                    isSelected={this.state.hedisisSelected2}
+                                    onSelect={this.onClickheartdis2}
+                                    label="Yes"
                                 />
                                 <SelectionButton
                                     isSelected={this.state.hedisisSelected1}
                                     onSelect={this.onClickheartdis1}
-                                    label="Yes"
+                                    label="No"
                                 />
                                 </Form.Item>
                             </Col>

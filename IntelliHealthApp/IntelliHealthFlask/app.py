@@ -5,6 +5,7 @@ from service.get_gpt_service import GptService
 from service.get_model_service import ModelService
 import langchain_response
 import openai
+import pdb
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
