@@ -1,0 +1,29 @@
+.selection-button {
+  background-color: transparent;
+  border: 2px solid blue;
+  border-radius: 10%; /* Make the button a circle */
+  padding: 10px; /* Adjust the padding to control the size of the circle */
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  margin-right: 15px;
+  height: 30px; /* Set the desired height in pixels */
+  line-height: 9px; /* Center the text vertically within the button */
+}
+
+.selection-button.selected {
+  background-color: blue; /* Filled with blue color when selected */
+  color: white; /* Change the text color to white when selected */
+}
+
+.larger-text {
+  font-size: 18px;
+}
+
+.regular-text {
+  font-size: 16px;
+}
+
+.smaller-text {
+  font-size: 14px;
+}
