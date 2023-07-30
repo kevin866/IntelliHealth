@@ -79,9 +79,9 @@ def predict():
         data = np.ravel(input_data)
         recom = recommendation_generator(np.ravel(input_data))
         if prediction == 1.0:
-            prediction = "  You have a high chances of developing diabetes. "
+            prediction = "  You have a high chances of developing diabetes. \n"
         else:
-            prediction = "  You have a low chances of developing diabetes. "
+            prediction = "  You have a low chances of developing diabetes. \n"
         #print("prediction: ", prediction)
 
     else:

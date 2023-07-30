@@ -85,6 +85,9 @@ class Physician extends Component {
             maleisSelected1: !prevState.maleisSelected1,
             gender: 0,
         }));
+        await this.setState((prevState) => ({
+            currentPrediction: "Your prediction will be displayed here",
+        }));
         this.formRef.current.setFieldsValue({
             gender: 0,
         });
@@ -156,15 +159,19 @@ class Physician extends Component {
                 gender: 1,
             }));
         }
-        await this.setState({ age: 90 });
-        this.formRef.current.setFieldsValue({
-            age: 90,
-        });
+        await this.setState((prevState) => ({
+            currentPrediction: "Your prediction will be displayed here",
+        }));
+        
         if (this.state.hyperisSelected1) {
             await this.setState((prevState) => ({
                 hyperisSelected1: !prevState.hyperisSelected1,
             }));
         }
+        await this.setState({ age: 90 });
+        this.formRef.current.setFieldsValue({
+            age: 90,
+        });
         await this.setState((prevState) => ({
             hyperisSelected2: !prevState.hyperisSelected2,
             hypertension: 1,
@@ -581,6 +588,7 @@ class Physician extends Component {
 
 
                 <div>
+<<<<<<< Updated upstream
                     <Card title="Prediction: " bordered={false} style={{ width: 800, margin: 10}}>
                             <p style={{ textAlign: 'left' }}>
                                 {this.state.currentPrediction !== null ? (
@@ -598,6 +606,22 @@ class Physician extends Component {
                                     <span>No prediction available.</span>
                                 )}
                             </p>
+=======
+                    <Card title="Prediction: " bordered={false} style={{ width: 800, margin: 20}}>
+                        <p style={{ textAlign: 'left' }}>
+                            {this.state.currentPrediction !== null ? (
+                                this.state.currentPrediction.split('\n').map((paragraph, index) => (
+                                <React.Fragment key={index}>
+                                    {index > 0 && <span style={{ marginLeft: '20px' }} />}
+                                    {paragraph}
+                                    <br />
+                                </React.Fragment>
+                                ))
+                            ) : (
+                                <span>No prediction available.</span>
+                            )}
+                        </p>
+>>>>>>> Stashed changes
                     </Card>
 
             </div>
