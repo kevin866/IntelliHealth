@@ -43,6 +43,7 @@ import React, { Component } from 'react';
 import { Button, Input, Card, Form, InputNumber, Tabs, Col, Row} from 'antd';
 import axios from 'axios';
 import SelectionButton from './SelectionButton'; // Import the SelectionButton component
+import LoadingSpinner from "./LoadingSpinner";
 
 
 
@@ -73,7 +74,9 @@ class Physician extends Component {
             hyperisSelected1: false,
             hyperisSelected2: false,
             hedisisSelected1:false,
-            hedisisSelected2:false
+            hedisisSelected2:false,
+            isLoading: false,
+            setIsLoading:false,
         }
         this.formRef = React.createRef();
     }
@@ -385,6 +388,7 @@ class Physician extends Component {
     }
 
     onClickPrediction = () => {
+        this.setState({ isLoading: true });
         var data = [[this.state.gender, this.state.age, this.state.hypertension, this.state.heartdisease, this.state.smokingHistory, this.state.bmi, this.state.hbA1cLevel, this.state.bloodGlucoseLevel]]
         var matrix = { 'data': data }
         console.log(matrix);
@@ -395,6 +399,7 @@ class Physician extends Component {
             },
             body: JSON.stringify(matrix)
         }).then((response) => {
+            this.setState({ isLoading: false });
             if (response.status !== 200) {
                 throw Error('Fail to request the answer from the server');
             }
@@ -424,6 +429,7 @@ class Physician extends Component {
     }
 
     render() {
+        const { isLoading } = this.state;
         return (
             <div className="Main" style={{fontWeight: "bold"}}>
                 <Tabs defaultActiveKey = "prediction">
@@ -584,11 +590,15 @@ class Physician extends Component {
                         <p></p>
 
                         <Button  type="primary" htmlType="submit" onClick={this.onClickPrediction}> Get Prediction </Button>
+                        
 
-
+                       
+                        
+       
 
                 <div>
                     <Card title="Prediction: " bordered={false} style={{ width: 800, margin: 10}}>
+                        {isLoading ? <LoadingSpinner /> : 
                             <p style={{ textAlign: 'left' }}>
                                 {this.state.currentPrediction !== null ? (
                                     this.state.currentPrediction.split('\n').map((paragraph, index) => (
@@ -605,6 +615,7 @@ class Physician extends Component {
                                     <span>No prediction available.</span>
                                 )}
                             </p>
+                        }
                     </Card>
 
             </div>
