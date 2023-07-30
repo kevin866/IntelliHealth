@@ -588,7 +588,6 @@ class Physician extends Component {
 
 
                 <div>
-<<<<<<< Updated upstream
                     <Card title="Prediction: " bordered={false} style={{ width: 800, margin: 10}}>
                             <p style={{ textAlign: 'left' }}>
                                 {this.state.currentPrediction !== null ? (
@@ -606,22 +605,6 @@ class Physician extends Component {
                                     <span>No prediction available.</span>
                                 )}
                             </p>
-=======
-                    <Card title="Prediction: " bordered={false} style={{ width: 800, margin: 20}}>
-                        <p style={{ textAlign: 'left' }}>
-                            {this.state.currentPrediction !== null ? (
-                                this.state.currentPrediction.split('\n').map((paragraph, index) => (
-                                <React.Fragment key={index}>
-                                    {index > 0 && <span style={{ marginLeft: '20px' }} />}
-                                    {paragraph}
-                                    <br />
-                                </React.Fragment>
-                                ))
-                            ) : (
-                                <span>No prediction available.</span>
-                            )}
-                        </p>
->>>>>>> Stashed changes
                     </Card>
 
             </div>
