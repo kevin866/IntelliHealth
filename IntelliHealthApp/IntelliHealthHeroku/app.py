@@ -1,12 +1,13 @@
 import numpy as np
-from flask import Flask, request, json
+from flask import Flask, request, json, send_from_directory
 from flask_cors import CORS, cross_origin
 from service.get_gpt_service import GptService
 from service.get_model_service import ModelService
 import langchain_response
 import openai
 import pdb
-app = Flask(__name__)
+app = Flask(__name__, static_folder='client/build', static_url_path='')
+
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
@@ -92,6 +93,10 @@ def predict():
     print(response)
     return response
 
+@app.route('/')
+def serve():
+    return send_from_directory(app.static_folder, 'index.html')
+
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1')
+    app.run(host='0.0.0.0')
