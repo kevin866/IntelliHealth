@@ -1,12 +1,13 @@
 import numpy as np
-from flask import Flask, request, json
+from flask import Flask, request, json, send_from_directory
 from flask_cors import CORS, cross_origin
 from service.get_gpt_service import GptService
 from service.get_model_service import ModelService
 import langchain_response
 import openai
 import pdb
-app = Flask(__name__)
+app = Flask(__name__, static_folder='client/build', static_url_path='')
+
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
@@ -38,7 +39,7 @@ def chat(chat_content):
 """   
 def recommendation_generator(data):
     "Give recommendation for preventing diabetes to a male 29 years old with a Hypertension of 3, Heart Disease of 3, Smoking history, a BMI of 76, HbA1c Level of 87, and blood glucose level of 35. "
-    query = "Give a very concise recommendations to a {age}-year-old {gender} with {hypertension}, {heart_disease}, {smoking_history}, a BMI of {BMI}, HbA1c level of {HbA1c}, and a blood glucose level of {glucose}. Make you repsonse in second person pronoun.'".format(age = data[1], 
+    query = "Give a very concise recommendations to a {age}-year-old {gender} with {hypertension}, {heart_disease}, {smoking_history}, a BMI of {BMI}, HbA1c level of {HbA1c}, and a blood glucose level of {glucose}. Make you repsonse in second person pronoun.'".format(age = data[1],
                                                                                                                                                                                                             gender = "male" if data[0] == 1.0 else "female", 
                                                                                                                                                                                                             hypertension = "hypertension" if data[2] == 1.0 else "no hypertension", 
                                                                                                                                                                                                             heart_disease = "heart diease" if data[3] == 1.0 else "no heart diease", 
@@ -92,6 +93,10 @@ def predict():
     print(response)
     return response
 
+@app.route('/')
+def serve():
+    return send_from_directory(app.static_folder, 'index.html')
+
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1')
+    app.run(host='0.0.0.0')
