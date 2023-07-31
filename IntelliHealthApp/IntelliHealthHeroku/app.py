@@ -39,7 +39,7 @@ def chat(chat_content):
 """   
 def recommendation_generator(data):
     "Give recommendation for preventing diabetes to a male 29 years old with a Hypertension of 3, Heart Disease of 3, Smoking history, a BMI of 76, HbA1c Level of 87, and blood glucose level of 35. "
-    query = "Give a very concise recommendations to a {age}-year-old {gender} with {hypertension}, {heart_disease}, {smoking_history}, a BMI of {BMI}, HbA1c level of {HbA1c}, and a blood glucose level of {glucose}. Make you repsonse in second person pronoun.'".format(age = data[1], 
+    query = "Give a very concise recommendations to a {age}-year-old {gender} with {hypertension}, {heart_disease}, {smoking_history}, a BMI of {BMI}, HbA1c level of {HbA1c}, and a blood glucose level of {glucose}. Make you repsonse in second person pronoun.'".format(age = data[1],
                                                                                                                                                                                                             gender = "male" if data[0] == 1.0 else "female", 
                                                                                                                                                                                                             hypertension = "hypertension" if data[2] == 1.0 else "no hypertension", 
                                                                                                                                                                                                             heart_disease = "heart diease" if data[3] == 1.0 else "no heart diease", 

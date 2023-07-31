@@ -48,8 +48,8 @@ import LoadingSpinner from "./LoadingSpinner";
 
 
 
-const ASK_QUETIONS_URL = 'http://127.0.0.1:5000/api/v1/chat/'
-const QUOTE_MODEL_URL = 'http://127.0.0.1:5000/api/v1/model/prediction'
+const ASK_QUETIONS_URL = 'https://intellihealth-d355d13bbdb9.herokuapp.com/api/v1/chat/'
+const QUOTE_MODEL_URL = 'https://intellihealth-d355d13bbdb9.herokuapp.com/api/v1/model/prediction'
 const { TextArea } = Input;
 let text1 = "sea";
 class Physician extends Component {
