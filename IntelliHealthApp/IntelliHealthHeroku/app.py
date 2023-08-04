@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 from flask import Flask, request, json, send_from_directory
 from flask_cors import CORS, cross_origin
@@ -93,15 +95,11 @@ def predict():
     print(response)
     return response
 
-
 @app.route('/')
 def serve():
     return send_from_directory(app.static_folder, 'index.html')
 
 
-def main():
-    app.run(host='0.0.0.0', port=5000)
-
-
 if __name__ == '__main__':
-    main()
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
