@@ -1,10 +1,36 @@
 .Main {
-    background-color: #e8f0fd;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: rgb(63, 14, 240);
+  background-color: #e8f0fd;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: row;
+  font-size: calc(10px + 2vmin);
+  color: rgb(63, 14, 240);
+}
+
+form.ant-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.ant-form-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.ant-card {
+  max-width: 100%;
+}
+
+.ant-tabs {
+  max-width: 90%;
+}
+
+@media (width < 900px) {
+  form.ant-form {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
   }
+}

@@ -13,7 +13,7 @@ class App extends React.Component {
         super(props);
         // define state for the components states
         this.state = {
-            phase: 0,
+            phase: 2,
         }
     }
 
