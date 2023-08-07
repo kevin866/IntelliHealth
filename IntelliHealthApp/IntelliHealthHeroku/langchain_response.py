@@ -158,7 +158,7 @@ def query_cdc_embedding(input_text, index_name):
     #env_vars = dotenv_values('utils/.env')
     #PINECONE_API_KEY = env_vars['PINECONE_KEY_cdc']
     #PINECONE_ENV = env_vars['PINECONE_ENVIRON_cdc']
-
+    
     env_vars = dotenv_values('utils/.env')
     print(env_vars)
     PINECONE_API_KEY = env_vars['PINECONE_KEY']
@@ -205,6 +205,7 @@ def query_cdc_embedding(input_text, index_name):
 
     #query = "what is diabetets?"
     # vectorize with OpenAI text-emebdding-ada-002 
+    input_orig = input_text
     input_text = 'user: ' + input_text
     embedding = openai.Embedding.create(
         input=input_text,
@@ -214,25 +215,27 @@ def query_cdc_embedding(input_text, index_name):
     vector = embedding["data"][0]["embedding"]
     
     search_response = index.query(top_k=5,vector=vector,include_metadata=True)
+    search_result = get_highest_score(search_response['matches'])
+    if(search_result != ''):
+        context, url = get_highest_score(search_response['matches'])
+        prompt = f"Answer the question based on the context below:\n\n{context}\n\nQuestion: {input_text}\nAnswer:"
 
-    context, url = get_highest_score(search_response['matches'])
+        response = openai.Completion.create(
+            prompt=prompt,
+            model="text-davinci-003",
+            temperature=0,
+            max_tokens=150,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0,
+            stop=None
+        )
 
-    prompt = f"Answer the question based on the context below:\n\n{context}\n\nQuestion: {input_text}\nAnswer:"
-
-    response = openai.Completion.create(
-        prompt=prompt,
-        model="text-davinci-003",
-        temperature=0,
-        max_tokens=150,
-        top_p=1,
-        frequency_penalty=0,
-        presence_penalty=0,
-        stop=None
-    )
-
-    answer = response.choices[0].text.strip()
-    answer_with_url = answer + ' URL: ' + url  # Append the answer with the URL
-    return answer_with_url
+        answer = response.choices[0].text.strip()
+        answer_with_url = answer + ' URL: ' + url  # Append the answer with the URL
+        return answer_with_url
+    else:
+        return("No relevant information found for the question: " + input_orig)
 
 def generate_response(message):
     # Combine conversation history and current message
@@ -248,7 +251,8 @@ def generate_response(message):
     #print(response)
     #return reply2
     input_text = message
+    #pdb.set_trace()
     reply = query_cdc_embedding(input_text, "diabetes")
-    if not reply.startswith("Answer from cdc.gov/diabetes: "):
+    if not reply.startswith("No relevant information") and not reply.startswith("Answer from cdc.gov/diabetes: "):
         reply = "Answer from cdc.gov/diabetes: " + reply
     return reply
