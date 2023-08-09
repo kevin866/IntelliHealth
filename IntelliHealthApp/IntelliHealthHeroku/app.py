@@ -8,10 +8,14 @@ from service.get_model_service import ModelService
 import langchain_response
 import openai
 import pdb
+
+from utils.utils import ModelPrediction
+
 app = Flask(__name__, static_folder='client/build', static_url_path='')
 
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
+model_prediction_bean = ModelPrediction()
 
 @app.route('/api/v1/health')
 @cross_origin()
@@ -69,7 +73,7 @@ def predict():
     if content_type == 'application/json':
         json_input = request.json
         #print("model request inputs: ", json_input)
-        cur_model = ModelService()
+        cur_model = ModelService(model_prediction_bean)
         #print(type(json_input))
         body = json.loads(json_input['body'])
         #print(type(body))
